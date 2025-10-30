@@ -24,7 +24,7 @@ export function Sidebar() {
       {/* Sidebar - Compact vertical */}
       <div className={`flex h-full w-52 flex-col gap-4 py-8`}>
         {/* Logo */}
-        <div className="shadow-gray-soft mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-background p-3 text-primary">
+        <div className="shadow-gray-soft mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-background-secondary p-3 text-primary">
           <ChartPie className="h-full w-full" />
         </div>
 
@@ -37,10 +37,10 @@ export function Sidebar() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`relative mx-auto flex h-10 w-10 items-center justify-center rounded-full p-2 text-sm font-medium transition-all duration-500 ease-in-out ${
+                  className={`relative mx-auto flex h-10 w-10 items-center justify-center rounded-full p-2 text-sm font-medium transition-all duration-500 ease-in-out mb-2 ${
                     isActive
-                      ? 'bg-background text-foreground'
-                      : 'hover:bg-primary-foreground/10 text-primary-foreground'
+                      ? 'bg-background-secondary text-foreground'
+                      : 'hover:bg-accent text-primary-foreground'
                   } group-hover/nav:w-full group-hover/nav:justify-start group-hover/nav:gap-3 group-hover/nav:rounded-xl group-hover/nav:px-4`}
                   onClick={() => setIsOpen(false)}
                 >
@@ -62,22 +62,6 @@ export function Sidebar() {
           </div>
         </nav>
       </div>
-
-      {/* Mobile menu button - Only on mobile */}
-      <button
-        className="fixed left-4 top-4 z-50 rounded-full bg-foreground p-3 text-background shadow-xl md:hidden"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <BarChart3 className="h-5 w-5" />
-      </button>
-
-      {/* Overlay for mobile */}
-      {isOpen && (
-        <div
-          className="fixed inset-0 z-30 bg-black/50 md:hidden"
-          onClick={() => setIsOpen(false)}
-        />
-      )}
     </>
   )
 }

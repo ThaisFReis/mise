@@ -21,7 +21,10 @@ const config: Config = {
         border: "var(--color-border)",
         input: "var(--color-input)",
         ring: "var(--color-ring)",
-        background: "var(--color-background)",
+        background: {
+          DEFAULT: "var(--color-background)",
+          secondary: "var(--color-background-secondary)",
+        },
         foreground: "var(--color-foreground)",
         primary: {
           DEFAULT: "var(--color-primary)",

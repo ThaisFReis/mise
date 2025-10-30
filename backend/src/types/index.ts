@@ -23,16 +23,18 @@ export interface TopProduct {
 }
 
 export interface RevenueByChannel {
+  channelId: string;
   channelName: string;
+  channelType: string;
   revenue: number;
-  orderCount: number;
+  totalOrders: number;
   averageTicket: number;
 }
 
 export interface RevenueByHour {
   hour: number;
   revenue: number;
-  orderCount: number;
+  salesCount: number;
 }
 
 export interface ProductPerformance {
@@ -43,12 +45,25 @@ export interface ProductPerformance {
   quantity: number;
   averagePrice: number;
   customizationRate?: number;
+  percentOfTotal?: number;
+  trend?: 'up' | 'down' | 'neutral';
+  trendPercentage?: number;
+}
+
+export interface ProductFilters {
+  categoryId?: number;
+  channelId?: number;
+  storeId?: number;
+  sortBy?: 'revenue' | 'quantity' | 'name' | 'averagePrice';
+  sortOrder?: 'asc' | 'desc';
 }
 
 export interface ProductCustomization {
   itemName: string;
   frequency: number;
   averageAdditionalPrice: number;
+  totalRevenue?: number;
+  type?: 'added' | 'removed';
 }
 
 export interface ChannelPerformance {
@@ -60,6 +75,36 @@ export interface ChannelPerformance {
   averageTicket: number;
   averagePreparationTime?: number;
   averageDeliveryTime?: number;
+  cancellationRate?: number;
+  percentOfTotal?: number;
+}
+
+export interface ChannelTopProduct {
+  channelId: number;
+  channelName: string;
+  productId: number;
+  productName: string;
+  quantity: number;
+  revenue: number;
+  averagePrice: number;
+}
+
+export interface ChannelPeakHour {
+  channelId: number;
+  channelName: string;
+  hour: number;
+  orderCount: number;
+  revenue: number;
+  averageTicket: number;
+}
+
+export interface ChannelTimeline {
+  date: string;
+  channelId: number;
+  channelName: string;
+  revenue: number;
+  orderCount: number;
+  averageTicket: number;
 }
 
 export interface StorePerformance {

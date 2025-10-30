@@ -9,9 +9,14 @@ import type {
   ChannelRevenue,
   Product,
   ProductWithMetrics,
+  ProductPerformance,
+  ProductCustomization,
   Channel,
   Store,
   ChannelPerformance,
+  ChannelTopProduct,
+  ChannelPeakHour,
+  ChannelTimeline,
   StorePerformance,
 } from '@/types'
 
@@ -31,6 +36,9 @@ export interface ProductFilters extends DateFilter {
   limit?: number
   storeId?: string
   channelId?: string
+  categoryId?: string
+  sortBy?: 'revenue' | 'quantity' | 'name' | 'averagePrice'
+  sortOrder?: 'asc' | 'desc'
 }
 
 // Dashboard hooks
@@ -85,7 +93,7 @@ export function useRevenueByChannel(
 // Products hooks
 export function useProducts(
   filters: ProductFilters,
-  options?: Omit<UseQueryOptions<{ products: Product[]; total: number; page: number; limit: number }>, 'queryKey' | 'queryFn'>
+  options?: Omit<UseQueryOptions<{ products: ProductPerformance[]; total: number }>, 'queryKey' | 'queryFn'>
 ) {
   return useQuery({
     queryKey: queryKeys.products.all(filters),
@@ -112,13 +120,24 @@ export function useProductDetails(
 export function useProductCustomizations(
   productId: string,
   filters: DateFilter,
-  options?: Omit<UseQueryOptions<any>, 'queryKey' | 'queryFn'>
+  options?: Omit<UseQueryOptions<ProductCustomization[]>, 'queryKey' | 'queryFn'>
 ) {
   return useQuery({
     queryKey: queryKeys.products.customizations(productId, filters),
     queryFn: () => api.getProductCustomizations(productId, filters),
     staleTime: 5 * 60 * 1000, // 5 minutes
     enabled: !!productId,
+    ...options,
+  })
+}
+
+export function useCategories(
+  options?: Omit<UseQueryOptions<Array<{ id: number; name: string }>>, 'queryKey' | 'queryFn'>
+) {
+  return useQuery({
+    queryKey: ['categories'],
+    queryFn: () => api.getCategories(),
+    staleTime: 60 * 60 * 1000, // 1 hour - static data
     ...options,
   })
 }
@@ -142,6 +161,42 @@ export function useChannelPerformance(
   return useQuery({
     queryKey: queryKeys.channels.performance(filters),
     queryFn: () => api.getChannelPerformance(filters),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    ...options,
+  })
+}
+
+export function useChannelTopProducts(
+  filters: DateFilter & { limit?: number },
+  options?: Omit<UseQueryOptions<ChannelTopProduct[]>, 'queryKey' | 'queryFn'>
+) {
+  return useQuery({
+    queryKey: queryKeys.channels.topProducts(filters),
+    queryFn: () => api.getChannelTopProducts(filters),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    ...options,
+  })
+}
+
+export function useChannelPeakHours(
+  filters: DateFilter,
+  options?: Omit<UseQueryOptions<ChannelPeakHour[]>, 'queryKey' | 'queryFn'>
+) {
+  return useQuery({
+    queryKey: queryKeys.channels.peakHours(filters),
+    queryFn: () => api.getChannelPeakHours(filters),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    ...options,
+  })
+}
+
+export function useChannelTimeline(
+  filters: DateFilter,
+  options?: Omit<UseQueryOptions<ChannelTimeline[]>, 'queryKey' | 'queryFn'>
+) {
+  return useQuery({
+    queryKey: queryKeys.channels.timeline(filters),
+    queryFn: () => api.getChannelTimeline(filters),
     staleTime: 5 * 60 * 1000, // 5 minutes
     ...options,
   })

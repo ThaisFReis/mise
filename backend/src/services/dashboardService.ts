@@ -161,23 +161,25 @@ export class DashboardService {
 
     const revenueByChannel = await prisma.$queryRaw<RevenueByChannel[]>`
       SELECT
+        c.id as "channelId",
         c.name as "channelName",
+        c.type as "channelType",
         SUM(s.total_amount) as revenue,
-        COUNT(s.id) as "orderCount",
+        COUNT(s.id) as "totalOrders",
         AVG(s.total_amount) as "averageTicket"
       FROM sales s
       INNER JOIN channels c ON c.id = s.channel_id
       WHERE s.created_at >= ${start}
         AND s.created_at <= ${end}
         AND s.sale_status_desc = 'COMPLETED'
-      GROUP BY c.name
+      GROUP BY c.id, c.name, c.type
       ORDER BY revenue DESC
     `;
 
     const formatted = revenueByChannel.map((item) => ({
       ...item,
       revenue: Number(item.revenue),
-      orderCount: Number(item.orderCount),
+      totalOrders: Number(item.totalOrders),
       averageTicket: Number(item.averageTicket),
     }));
 
@@ -201,7 +203,7 @@ export class DashboardService {
       SELECT
         EXTRACT(HOUR FROM created_at)::INTEGER as hour,
         SUM(total_amount) as revenue,
-        COUNT(id) as "orderCount"
+        COUNT(id) as "salesCount"
       FROM sales
       WHERE created_at >= ${start}
         AND created_at <= ${end}
@@ -213,7 +215,7 @@ export class DashboardService {
     const formatted = revenueByHour.map((item) => ({
       ...item,
       revenue: Number(item.revenue),
-      orderCount: Number(item.orderCount),
+      salesCount: Number(item.salesCount),
     }));
 
     await cacheService.set(cacheKey, formatted, 600); // 10 minutes

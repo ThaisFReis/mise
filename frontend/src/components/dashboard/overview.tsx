@@ -3,11 +3,17 @@
 import { useDashboardMetrics, useTopProducts, useRevenueByHour, useRevenueByChannel } from '@/hooks/useApi'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useFilters } from '@/store'
-import { useMemo } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { HourlySalesChart, ChannelRevenueChart, ChartContainer } from '@/components/charts'
 
 export function DashboardOverview() {
   const { filters } = useFilters()
+  const [mounted, setMounted] = useState(false)
+
+  // Prevent hydration mismatch
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Convert Zustand filter format to API format
   const apiFilters = useMemo(() => ({
@@ -73,11 +79,30 @@ export function DashboardOverview() {
     return `${value >= 0 ? '+' : ''}${value.toFixed(1)}%`
   }
 
+  // Prevent hydration mismatch - render skeleton on server and first client render
+  if (!mounted) {
+    return (
+      <div className="space-y-6 px-2">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-32 w-full rounded-lg" />
+          ))}
+        </div>
+        <div className="grid gap-6 md:grid-cols-2">
+          {[1, 2].map((i) => (
+            <Skeleton key={i} className="h-80 w-full rounded-lg" />
+          ))}
+        </div>
+        <Skeleton className="h-96 w-full rounded-lg" />
+      </div>
+    )
+  }
+
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6 animate-fade-in px-2">
       {/* Metrics Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <div className="metric-card group">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="metric-card group shadow-gray-soft">
           <div className="flex flex-row items-center justify-between space-y-0 pb-2">
             <h3 className="text-sm font-medium text-muted-foreground">Faturamento Total</h3>
             <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
@@ -102,7 +127,7 @@ export function DashboardOverview() {
           </div>
         </div>
 
-        <div className="metric-card group">
+        <div className="metric-card group shadow-gray-soft">
           <div className="flex flex-row items-center justify-between space-y-0 pb-2">
             <h3 className="text-sm font-medium text-muted-foreground">Total de Vendas</h3>
             <div className="h-8 w-8 rounded-full bg-chart-2/10 flex items-center justify-center">
@@ -179,7 +204,7 @@ export function DashboardOverview() {
       </div>
 
       {/* Charts Row */}
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-2">
         <ChartContainer
           title="Vendas por Hora"
           loading={hourlySalesLoading}
@@ -198,7 +223,7 @@ export function DashboardOverview() {
       </div>
 
       {/* Top Products */}
-      <div className="metric-card">
+      <div className="metric-card !scale-100">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-semibold text-foreground">Top 5 Produtos Mais Vendidos</h3>
           <span className="text-xs text-muted-foreground px-3 py-1 rounded-full bg-muted">Este período</span>
@@ -214,7 +239,7 @@ export function DashboardOverview() {
         ) : topProducts && topProducts.length > 0 ? (
           <div className="space-y-2">
             {topProducts.map((product, index) => (
-              <div key={product.id || index} className="flex items-center justify-between p-4 rounded-lg border border-border bg-card/50 hover:bg-muted/30 transition-colors group">
+              <div key={product.id || index} className="flex items-center justify-between p-4 rounded-lg bg-card hover:bg-muted transition duration-500 group hover:scale-105">
                 <div className="flex items-center gap-3">
                   <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary font-bold text-sm">
                     #{index + 1}

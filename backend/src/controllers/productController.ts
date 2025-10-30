@@ -5,11 +5,29 @@ import { AppError } from '../middleware/errorHandler';
 export class ProductController {
   async getProducts(req: Request, res: Response, next: NextFunction) {
     try {
-      const { startDate, endDate, page, limit } = req.query;
+      const {
+        startDate,
+        endDate,
+        page,
+        limit,
+        categoryId,
+        channelId,
+        storeId,
+        sortBy,
+        sortOrder
+      } = req.query;
 
       if (!startDate || !endDate) {
         throw new AppError(400, 'startDate and endDate are required');
       }
+
+      const filters = {
+        categoryId: categoryId ? parseInt(categoryId as string, 10) : undefined,
+        channelId: channelId ? parseInt(channelId as string, 10) : undefined,
+        storeId: storeId ? parseInt(storeId as string, 10) : undefined,
+        sortBy: (sortBy as 'revenue' | 'quantity' | 'name' | 'averagePrice') || 'revenue',
+        sortOrder: (sortOrder as 'asc' | 'desc') || 'desc',
+      };
 
       const result = await productService.getProducts(
         {
@@ -17,7 +35,8 @@ export class ProductController {
           endDate: endDate as string,
         },
         page ? parseInt(page as string, 10) : 1,
-        limit ? parseInt(limit as string, 10) : 20
+        limit ? parseInt(limit as string, 10) : 20,
+        filters
       );
 
       res.json(result);

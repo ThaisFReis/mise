@@ -4,11 +4,10 @@
 
 @layer base {
   :root {
-    --background: oklch(0.9950 0.0015 181.8344);
-    --background-gradient-start: oklch(0.9950 0.0020 181.8344);
-    --background-gradient-end: oklch(0.9850 0.0035 181.8344);
+    --background:  oklch(0.9647 0.0035 181.8344);
+    --background-secondary: oklch(0.9973 0.0035 181.8344);
     --foreground: oklch(0.2149 0.0025 247.9450);
-    --card: oklch(1.0000 0 0);
+    --card: oklch(0.9973 0.0035 181.8344);
     --card-foreground: oklch(0.2149 0.0025 247.9450);
     --popover: oklch(1.0000 0 0);
     --popover-foreground: oklch(0.2149 0.0025 247.9450);
@@ -61,11 +60,12 @@
   }
   
   .dark {
-    --background: oklch(0.1800 0.0015 247.9404);
+    --background: oklch(0.1500 0.0015 247.9404) ;
+    --background-secondary: oklch(0.1800 0.0015 247.9404);
     --background-gradient-start: oklch(0.2200 0.0020 247.9404);
     --background-gradient-end: oklch(0.1600 0.0025 247.9404);
     --foreground: oklch(0.9379 0.0035 247.8606);
-    --card: oklch(0.2038 0.0023 247.9404);
+    --card: oklch(0.1800 0.0015 247.9404);
     --card-foreground: oklch(0.9379 0.0035 247.8606);
     --popover: oklch(0.2038 0.0023 247.9404);
     --popover-foreground: oklch(0.9379 0.0035 247.8606);
@@ -117,6 +117,7 @@
   
   * {
     --color-background: var(--background);
+    --color-background-secondary: var(--background-secondary);
     --color-background-gradient-start: var(--background-gradient-start);
     --color-background-gradient-end: var(--background-gradient-end);
     --color-foreground: var(--foreground);
@@ -236,7 +237,7 @@
 
 /* Custom utilities for analytics dashboard */
 .metric-card {
-  @apply bg-card text-card-foreground rounded-lg border p-6 shadow-sm transition-shadow hover:shadow-md;
+  @apply bg-card text-card-foreground rounded-2xl p-6 shadow-gray-soft transition duration-500 hover:scale-105;
 }
 
 .chart-container {

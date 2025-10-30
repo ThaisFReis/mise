@@ -120,6 +120,19 @@ export interface TopProduct {
   trendPercentage?: number
 }
 
+export interface ProductPerformance {
+  id: number
+  name: string
+  category: string
+  revenue: number
+  quantity: number
+  averagePrice: number
+  customizationRate?: number
+  percentOfTotal?: number
+  trend?: 'up' | 'down' | 'neutral'
+  trendPercentage?: number
+}
+
 export interface SalesByHour {
   hour: number
   salesCount: number
@@ -150,13 +163,44 @@ export interface ProductWithMetrics extends Product {
 }
 
 export interface ChannelPerformance {
-  channelId: string
+  id: number
+  name: string
+  type: string
+  revenue: number
+  orderCount: number
+  averageTicket: number
+  averagePreparationTime?: number
+  averageDeliveryTime?: number
+  cancellationRate?: number
+  percentOfTotal?: number
+}
+
+export interface ChannelTopProduct {
+  channelId: number
   channelName: string
-  channelType: string
-  totalOrders: number
+  productId: number
+  productName: string
+  quantity: number
+  revenue: number
+  averagePrice: number
+}
+
+export interface ChannelPeakHour {
+  channelId: number
+  channelName: string
+  hour: number
+  orderCount: number
   revenue: number
   averageTicket: number
-  percentOfTotal: number
+}
+
+export interface ChannelTimeline {
+  date: string
+  channelId: number
+  channelName: string
+  revenue: number
+  orderCount: number
+  averageTicket: number
 }
 
 export interface StorePerformance {
@@ -186,12 +230,11 @@ export interface TimeSeriesData {
 }
 
 export interface ProductCustomization {
-  id: string
-  name: string
-  type: 'ADDITION' | 'REMOVAL' | 'SUBSTITUTION'
-  price: number
-  timesUsed: number
-  revenueGenerated: number
+  itemName: string
+  frequency: number
+  averageAdditionalPrice: number
+  totalRevenue?: number
+  type?: 'added' | 'removed'
 }
 
 export interface ProductCombination {

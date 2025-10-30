@@ -6,9 +6,14 @@ import type {
   ChannelRevenue,
   Product,
   ProductWithMetrics,
+  ProductPerformance,
+  ProductCustomization,
   Channel,
   Store,
   ChannelPerformance,
+  ChannelTopProduct,
+  ChannelPeakHour,
+  ChannelTimeline,
   StorePerformance,
 } from '@/types'
 
@@ -80,8 +85,11 @@ class ApiClient {
     if (filters?.endDate) params.append('endDate', filters.endDate)
     if (filters?.storeId) params.append('storeId', filters.storeId)
     if (filters?.channelId) params.append('channelId', filters.channelId)
+    if (filters?.categoryId) params.append('categoryId', filters.categoryId)
     if (filters?.limit) params.append('limit', filters.limit.toString())
     if (filters?.page) params.append('page', filters.page.toString())
+    if (filters?.sortBy) params.append('sortBy', filters.sortBy)
+    if (filters?.sortOrder) params.append('sortOrder', filters.sortOrder)
 
     const queryString = params.toString()
     return queryString ? `?${queryString}` : ''
@@ -121,9 +129,9 @@ class ApiClient {
   }
 
   // Products endpoints
-  async getProducts(filters: any): Promise<{ products: Product[]; total: number; page: number; limit: number }> {
+  async getProducts(filters: any): Promise<{ products: ProductPerformance[]; total: number }> {
     const queryParams = this.buildQueryParams(filters)
-    return this.request<{ products: Product[]; total: number; page: number; limit: number }>(`/products${queryParams}`, {
+    return this.request<{ products: ProductPerformance[]; total: number }>(`/products${queryParams}`, {
       method: 'GET',
     })
   }
@@ -135,10 +143,16 @@ class ApiClient {
     })
   }
 
-  async getProductCustomizations(productId: string, filters: any): Promise<any> {
+  async getProductCustomizations(productId: string, filters: any): Promise<ProductCustomization[]> {
     const queryParams = this.buildQueryParams(filters)
-    return this.request<any>(`/products/${productId}/customizations${queryParams}`, {
+    return this.request<ProductCustomization[]>(`/products/${productId}/customizations${queryParams}`, {
       method: 'GET',
+    })
+  }
+
+  async getCategories(): Promise<Array<{ id: number; name: string }>> {
+    return this.request<Array<{ id: number; name: string }>>('/categories', {
+      next: { revalidate: 3600 }, // 1 hour cache for static data
     })
   }
 
@@ -152,6 +166,27 @@ class ApiClient {
   async getChannelPerformance(filters: any): Promise<ChannelPerformance[]> {
     const queryParams = this.buildQueryParams(filters)
     return this.request<ChannelPerformance[]>(`/channels/performance${queryParams}`, {
+      method: 'GET',
+    })
+  }
+
+  async getChannelTopProducts(filters: any): Promise<ChannelTopProduct[]> {
+    const queryParams = this.buildQueryParams(filters)
+    return this.request<ChannelTopProduct[]>(`/channels/top-products${queryParams}`, {
+      method: 'GET',
+    })
+  }
+
+  async getChannelPeakHours(filters: any): Promise<ChannelPeakHour[]> {
+    const queryParams = this.buildQueryParams(filters)
+    return this.request<ChannelPeakHour[]>(`/channels/peak-hours${queryParams}`, {
+      method: 'GET',
+    })
+  }
+
+  async getChannelTimeline(filters: any): Promise<ChannelTimeline[]> {
+    const queryParams = this.buildQueryParams(filters)
+    return this.request<ChannelTimeline[]>(`/channels/timeline${queryParams}`, {
       method: 'GET',
     })
   }
@@ -197,6 +232,9 @@ export const queryKeys = {
   channels: {
     all: () => ['channels'] as const,
     performance: (filters: any) => ['channels', 'performance', filters] as const,
+    topProducts: (filters: any) => ['channels', 'top-products', filters] as const,
+    peakHours: (filters: any) => ['channels', 'peak-hours', filters] as const,
+    timeline: (filters: any) => ['channels', 'timeline', filters] as const,
   },
   stores: {
     all: () => ['stores'] as const,
