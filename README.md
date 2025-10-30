@@ -1,79 +1,360 @@
-# 🏆 God Level Coder Challenge
+# 🍽️ Mise - Restaurant Analytics Dashboard
 
-## O Problema
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
+![Next.js](https://img.shields.io/badge/Next.js-15.0-black)
+![Node.js](https://img.shields.io/badge/Node.js-20.x-green)
 
-Donos de restaurantes gerenciam operações complexas através de múltiplos canais (presencial, iFood, Rappi, app próprio). Eles têm dados de **vendas, produtos, clientes e operações**, mas não conseguem extrair insights personalizados para tomar decisões de negócio.
+**Mise** é uma plataforma completa de análise de dados para restaurantes, oferecendo insights detalhados sobre vendas, produtos, canais e performance operacional. Desenvolvida com tecnologias modernas e foco em performance e experiência do usuário.
 
-Ferramentas como Power BI são genéricas demais. Dashboards fixos não respondem perguntas específicas. **Como empoderar donos de restaurantes a explorarem seus próprios dados?**
+## 📸 Screenshots
 
-## Seu Desafio
+### Dashboard Principal
+Visão geral com métricas principais, vendas por hora e distribuição por canal.
 
-Construa uma solução que permita donos de restaurantes **criarem suas próprias análises** sobre seus dados operacionais. Pense: "Power BI para restaurantes" ou "Metabase específico para food service".
+### Análise de Canais
+Compare a performance entre diferentes canais de venda (delivery, presencial, etc.).
 
-### O que esperamos
+### Explorador de Produtos
+Análise detalhada do cardápio com métricas de vendas, customizações e combinações.
 
-Uma plataforma onde um dono de restaurante possa:
-- Visualizar métricas relevantes (faturamento, produtos mais vendidos, horários de pico)
-- Criar dashboards personalizados sem escrever código
-- Comparar períodos e identificar tendências
-- Extrair valor de dados complexos de forma intuitiva
+## ✨ Funcionalidades
 
-### O que você recebe
+### 📊 Dashboard Analítico
+- **Métricas em tempo real**: Faturamento, pedidos, ticket médio e taxa de cancelamento
+- **Comparações temporais**: Compare períodos e identifique tendências
+- **Gráficos interativos**: Visualize vendas por hora e distribuição por canal
+- **Top produtos**: Identifique os itens mais vendidos do seu cardápio
 
-- Script para geração de **500.000 vendas** de 6 meses (50 lojas, múltiplos canais)
-- Schema PostgreSQL com dados realistas de operação
-- Liberdade total de tecnologias e arquitetura
-- Liberdade total no uso de AI e ferramentas de geração de código
+### 🔀 Análise de Canais
+- **Performance por canal**: Compare métricas entre delivery, presencial e outros canais
+- **Distribuição de vendas**: Gráfico de pizza mostrando participação de cada canal
+- **Horários de pico**: Identifique os melhores horários para cada canal
+- **Produtos mais vendidos**: Veja quais produtos performam melhor em cada canal
+- **Tempo de preparo/entrega**: Monitore eficiência operacional
+- **Taxa de cancelamento**: Acompanhe qualidade do serviço
 
-### O que você entrega
+### 🍕 Explorador de Produtos
+- **Análise detalhada do cardápio**: Performance individual de cada produto
+- **Filtros avançados**: Por categoria, canal, data e ordenação customizada
+- **Customizações**: Veja quais adicionais e modificações são mais populares
+- **Exportação de dados**: Exporte relatórios em múltiplos formatos
 
-1. Uma solução funcionando (deployed ou local) - com frontend e backend adequados ao banco fornecido
-2. Documentação de decisões arquiteturais
-3. Demo em vídeo (5-10 min) explicando sua abordagem - mostrando a solução funcional e deployada / rodando na sua máquina, apresentando-a no nível de detalhes que julgar relevante
-4. Código bem escrito e testável
+### 🎯 Recursos Adicionais
+- **Filtros globais**: Data range e seleção de lojas sincronizados em todas as páginas
+- **Tema escuro/claro**: Interface adaptável às preferências do usuário
+- **Cache inteligente**: Redis para consultas rápidas e eficientes
+- **Responsivo**: Funciona perfeitamente em desktop, tablet e mobile
 
-## 📚 Documentação
+## 🛠️ Tecnologias
 
-| Documento | Descrição |
-|-----------|-----------|
-| [PROBLEMA.md](./PROBLEMA.md) | Contexto detalhado, persona Maria, dores do usuário |
-| [DADOS.md](./DADOS.md) | Schema completo, padrões, volume de dados |
-| [AVALIACAO.md](./AVALIACAO.md) | Como avaliaremos sua solução |
-| [FAQ.md](./FAQ.md) | Perguntas frequentes |
-| [QUICKSTART.md](./QUICKSTART.md) | Tutorial rápido para começar o desafio |
+### Backend
+- **[Node.js](https://nodejs.org/)** - Runtime JavaScript
+- **[TypeScript](https://www.typescriptlang.org/)** - Tipagem estática
+- **[Express](https://expressjs.com/)** - Framework web minimalista
+- **[Prisma](https://www.prisma.io/)** - ORM moderno
+- **[PostgreSQL](https://www.postgresql.org/)** - Banco de dados relacional
+- **[Redis](https://redis.io/)** - Cache em memória
+- **[Docker](https://www.docker.com/)** - Containerização
 
-## Avaliação
+### Frontend
+- **[Next.js 15](https://nextjs.org/)** - Framework React com SSR
+- **[React 18](https://react.dev/)** - Biblioteca UI
+- **[TypeScript](https://www.typescriptlang.org/)** - Tipagem estática
+- **[Tailwind CSS](https://tailwindcss.com/)** - Framework CSS utility-first
+- **[shadcn/ui](https://ui.shadcn.com/)** - Componentes UI reutilizáveis
+- **[Recharts](https://recharts.org/)** - Biblioteca de gráficos
+- **[React Query](https://tanstack.com/query)** - Gerenciamento de estado server
+- **[Zustand](https://zustand-demo.pmnd.rs/)** - State management
 
-**Não** estamos avaliando se você seguiu instruções específicas.  
-**Sim** estamos avaliando:
-- Pensamento arquitetural e decisões técnicas
-- Qualidade da solução para o problema do usuário
-- Performance e escala
-- UX e usabilidade
-- Metodologia de trabalho e entrega
+## 🚀 Quick Start
 
+### Pré-requisitos
 
-## Prazo
+- Node.js 20.x ou superior
+- Docker e Docker Compose
+- Git
 
-Até 03/11/2025 às 23:59.
+### 1. Clone o Repositório
 
-## Submissão
+```bash
+git clone https://github.com/ThaisFReis/mise.git
+cd mise
+```
 
-Mande um email para gsilvestre@arcca.io
+### 2. Configure o Ambiente
 
-Com:
-- Link do repositório (público ou nos dê acesso)
-- Link do vídeo demo (5-10 min)
-- Link do deploy (opcional mas valorizado)
-- Documento de decisões arquiteturais
+**Backend:**
+```bash
+cd backend
+cp .env.example .env
+# Edite o arquivo .env com suas configurações
+```
 
-## Suporte
-- 💬 **Discord**: https://discord.gg/pRwmm64Vej
-- 📧 **Email**: gsilvestre@arcca.io
-- 📧 **Telefone**: (11) 93016 - 3509
+**Frontend:**
+```bash
+cd frontend
+cp .env.example .env.local
+# Edite o arquivo .env.local com suas configurações
+```
+
+### 3. Inicie os Serviços com Docker
+
+```bash
+docker-compose up -d
+```
+
+Isso irá iniciar:
+- PostgreSQL (porta 5432)
+- Redis (porta 6379)
+- Backend API (porta 3001)
+- Frontend (porta 3000)
+
+### 4. Configure o Banco de Dados
+
+```bash
+cd backend
+npm install
+npx prisma migrate dev
+npx prisma db seed  # Opcional: dados de exemplo
+```
+
+### 5. Acesse a Aplicação
+
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:3001/api
+- **API Docs**: http://localhost:3001/api-docs (se habilitado)
+
+## 📁 Estrutura do Projeto
+
+```
+mise/
+├── backend/                    # API REST
+│   ├── src/
+│   │   ├── controllers/       # Controladores de rotas
+│   │   ├── services/          # Lógica de negócio
+│   │   ├── routes/            # Definição de rotas
+│   │   ├── middleware/        # Middlewares customizados
+│   │   ├── config/            # Configurações (DB, cache, etc)
+│   │   ├── types/             # TypeScript types
+│   │   └── server.ts          # Entry point
+│   ├── prisma/
+│   │   └── schema.prisma      # Schema do banco de dados
+│   └── package.json
+│
+├── frontend/                   # Aplicação Next.js
+│   ├── src/
+│   │   ├── app/               # App Router (Next.js 13+)
+│   │   │   ├── dashboard/     # Páginas do dashboard
+│   │   │   │   ├── page.tsx           # Dashboard principal
+│   │   │   │   ├── channels/          # Análise de canais
+│   │   │   │   └── products/          # Explorador de produtos
+│   │   │   └── layout.tsx
+│   │   ├── components/        # Componentes React
+│   │   │   ├── charts/        # Gráficos (Recharts)
+│   │   │   ├── dashboard/     # Componentes específicos
+│   │   │   ├── layout/        # Sidebar, Header
+│   │   │   └── ui/            # Componentes base (shadcn/ui)
+│   │   ├── hooks/             # Custom hooks
+│   │   ├── lib/               # Utilitários e API client
+│   │   ├── store/             # Zustand stores
+│   │   └── types/             # TypeScript types
+│   └── package.json
+│
+├── docker-compose.yml         # Configuração Docker
+└── README.md
+```
+
+## 🔧 Desenvolvimento
+
+### Backend
+
+```bash
+cd backend
+
+# Instalar dependências
+npm install
+
+# Desenvolvimento com hot reload
+npm run dev
+
+# Build para produção
+npm run build
+
+# Rodar em produção
+npm start
+
+# Gerar cliente Prisma
+npx prisma generate
+
+# Criar nova migration
+npx prisma migrate dev --name nome_da_migration
+```
+
+### Frontend
+
+```bash
+cd frontend
+
+# Instalar dependências
+npm install
+
+# Desenvolvimento
+npm run dev
+
+# Build para produção
+npm run build
+
+# Rodar build de produção
+npm start
+
+# Lint
+npm run lint
+```
+
+## 📊 API Endpoints
+
+### Dashboard
+- `GET /api/dashboard/overview` - Métricas principais
+- `GET /api/dashboard/top-products` - Top produtos
+- `GET /api/dashboard/revenue-by-hour` - Vendas por hora
+- `GET /api/dashboard/revenue-by-channel` - Vendas por canal
+
+### Canais
+- `GET /api/channels/performance` - Performance dos canais
+- `GET /api/channels/top-products` - Top produtos por canal
+- `GET /api/channels/peak-hours` - Horários de pico
+- `GET /api/channels/timeline` - Evolução temporal
+
+### Produtos
+- `GET /api/products` - Lista de produtos com paginação
+- `GET /api/products/:id` - Detalhes de um produto
+- `GET /api/products/:id/customizations` - Customizações do produto
+
+### Outros
+- `GET /api/stores` - Lista de lojas
+- `GET /api/categories` - Lista de categorias
+- `GET /api/health` - Health check
+
+## 🔐 Variáveis de Ambiente
+
+### Backend (.env)
+
+```env
+# Database
+DATABASE_URL="postgresql://user:password@localhost:5432/mise"
+
+# Redis
+REDIS_HOST="localhost"
+REDIS_PORT=6379
+
+# Server
+PORT=3001
+NODE_ENV="development"
+
+# CORS
+CORS_ORIGIN="http://localhost:3000"
+```
+
+### Frontend (.env.local)
+
+```env
+# API
+NEXT_PUBLIC_API_URL="http://localhost:3001/api"
+
+# Analytics (opcional)
+NEXT_PUBLIC_GA_ID="G-XXXXXXXXXX"
+```
+
+## 🧪 Testes
+
+```bash
+# Backend
+cd backend
+npm test
+npm run test:watch
+npm run test:coverage
+
+# Frontend
+cd frontend
+npm test
+npm run test:e2e
+```
+
+## 📦 Build e Deploy
+
+### Docker Production
+
+```bash
+# Build das imagens
+docker-compose -f docker-compose.prod.yml build
+
+# Deploy
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+### Deploy Manual
+
+**Backend:**
+```bash
+cd backend
+npm run build
+NODE_ENV=production npm start
+```
+
+**Frontend:**
+```bash
+cd frontend
+npm run build
+npm start
+```
+
+## 🎨 Customização
+
+### Tema
+
+O projeto usa Tailwind CSS com CSS variables para temas. Edite `frontend/src/app/globals.css` para customizar cores:
+
+```css
+:root {
+  --color-primary: ...;
+  --color-secondary: ...;
+  /* ... */
+}
+```
+
+### Componentes
+
+Todos os componentes UI seguem o padrão shadcn/ui e podem ser customizados em `frontend/src/components/ui/`.
+
+## 🤝 Contribuindo
+
+Contribuições são bem-vindas! Por favor:
+
+1. Fork o projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
+5. Abra um Pull Request
+
+## 📝 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+## 👥 Autores
+
+- **Thais Reis** - [ThaisFReis](https://github.com/ThaisFReis)
+
+## 🙏 Agradecimentos
+
+- Baseado no desafio [Nola God Level](https://github.com/lucasvieira94/nola-god-level)
+- UI inspirada em componentes da [shadcn/ui](https://ui.shadcn.com/)
+- Ícones por [Lucide](https://lucide.dev/)
+
+## 📧 Contato
+
+Para dúvidas ou sugestões, abra uma [issue](https://github.com/ThaisFReis/mise/issues) no GitHub.
 
 ---
 
-**Não queremos que você adivinhe o que queremos. Queremos ver como VOCÊ resolveria este problema.**
-
-_Nola • 2025_
+⭐ Se este projeto foi útil, considere dar uma estrela no GitHub!
