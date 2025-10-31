@@ -358,10 +358,99 @@ export interface AppState {
   error: string | null
 }
 
+// Insights types
+export interface HeatmapData {
+  dayOfWeek: number // 0-6 (Sunday-Saturday)
+  hour: number // 0-23
+  value: number // Revenue or count
+  metric: 'revenue' | 'orders' | 'averageTicket'
+}
+
+export interface PeriodComparison {
+  current: DashboardMetrics
+  previous: DashboardMetrics
+  changes: {
+    revenue: number // % change
+    sales: number
+    avgTicket: number
+    cancelRate: number
+  }
+}
+
+export interface TimelineData {
+  date: string // ISO date
+  revenue: number
+  orders: number
+  avgTicket: number
+  cancelRate: number
+}
+
+export interface AutoInsight {
+  id: string
+  type: 'trend' | 'anomaly' | 'milestone' | 'recommendation'
+  severity: 'info' | 'warning' | 'success' | 'error'
+  title: string
+  description: string
+  metric?: string
+  change?: number // % change
+  actionable?: boolean
+  createdAt: string
+}
+
+export interface PreConfiguredReport {
+  id: string
+  name: string
+  description: string
+  type: 'top-products' | 'peak-hours' | 'channel-comparison' | 'monthly-summary' | 'store-ranking' | 'high-margin-products'
+  icon: string
+  data: any // Report-specific data structure
+  generatedAt: string
+  filters: DashboardFilters
+}
+
+// Report-specific types
+export interface ChannelComparisonData {
+  channelId: number
+  channelName: string
+  channelType: string
+  revenue: number
+  orderCount: number
+  averageTicket: number
+  averagePreparationTime: number
+  averageDeliveryTime: number
+}
+
+export interface MonthlySummaryData {
+  period: {
+    startDate: string
+    endDate: string
+  }
+  summary: {
+    totalRevenue: number
+    totalOrders: number
+    averageTicket: number
+    cancellationRate: number
+  }
+  topProducts: TopProduct[]
+  channelBreakdown: ChannelComparisonData[]
+}
+
+export interface StoreRankingData {
+  rank: number
+  storeId: number
+  storeName: string
+  city: string
+  revenue: number
+  orderCount: number
+  averageTicket: number
+  averagePrepTime: number
+  percentOfTotal: number
+}
+
 // Utility types
 export type TrendDirection = 'up' | 'down' | 'neutral'
 export type ChartType = 'line' | 'bar' | 'pie' | 'area' | 'radar'
-export type TimeGranularity = 'hour' | 'day' | 'week' | 'month' | 'year'
+export type TimeGranularity = 'hour' | 'day' | 'week' | 'month' | 'quarter' | 'year'
 export type ExportFormat = 'pdf' | 'excel' | 'csv' | 'png'
 
 // Theme types
@@ -371,4 +460,68 @@ export interface ThemeConfig {
   theme: Theme
   primaryColor: string
   accentColor: string
+}
+
+// Custom Reports Types
+export type CustomReportMetric =
+  | 'revenue'
+  | 'orders'
+  | 'avgTicket'
+  | 'preparationTime'
+  | 'deliveryTime'
+  | 'cancelRate'
+  | 'quantity'
+  | 'customizationRate'
+
+export type CustomReportDimension =
+  | 'product'
+  | 'category'
+  | 'channel'
+  | 'store'
+  | 'hour'
+  | 'dayOfWeek'
+  | 'date'
+  | 'month'
+
+export type CustomReportVisualization =
+  | 'table'
+  | 'bar'
+  | 'line'
+  | 'pie'
+  | 'cards'
+
+export interface CustomReportFilters {
+  startDate?: string
+  endDate?: string
+  storeIds?: number[]
+  channelIds?: number[]
+  categoryIds?: number[]
+  productIds?: number[]
+  limit?: number
+  sortBy?: string
+  sortOrder?: 'asc' | 'desc'
+}
+
+export interface CustomReportConfig {
+  metrics: CustomReportMetric[]
+  dimension: CustomReportDimension
+  filters: CustomReportFilters
+  visualization: CustomReportVisualization
+  name?: string
+}
+
+export interface CustomReportResult {
+  dimension: string
+  dimensionLabel: string
+  metrics: {
+    [key in CustomReportMetric]?: number
+  }
+}
+
+export interface SavedReport {
+  id: string
+  name: string
+  config: CustomReportConfig
+  createdAt: string
+  lastUsed?: string
 }

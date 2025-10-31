@@ -4,6 +4,9 @@ import productRoutes from './products';
 import channelRoutes from './channels';
 import storeRoutes from './stores';
 import categoryRoutes from './categories';
+import insightsRoutes from './insights';
+import reportsRoutes from './reports';
+import customReportsRoutes from './customReports';
 
 const router = Router();
 
@@ -12,6 +15,9 @@ router.use('/products', productRoutes);
 router.use('/channels', channelRoutes);
 router.use('/stores', storeRoutes);
 router.use('/categories', categoryRoutes);
+router.use('/insights', insightsRoutes);
+router.use('/reports', reportsRoutes);
+router.use('/custom-reports', customReportsRoutes);
 
 // Health check
 router.get('/health', (req, res) => {

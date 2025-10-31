@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { BarChart3, Package, Store, TrendingUp, FileText, Settings, ChartPie } from 'lucide-react'
+import { BarChart3, Package, Store, TrendingUp, FileText, Settings, ChartPie, Lightbulb } from 'lucide-react'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 
 const navigation = [
@@ -11,7 +11,7 @@ const navigation = [
   { name: 'Produtos', href: '/dashboard/products', icon: Package },
   { name: 'Canais', href: '/dashboard/channels', icon: TrendingUp },
   { name: 'Lojas', href: '/dashboard/stores', icon: Store },
-  { name: 'Relatórios', href: '/dashboard/reports', icon: FileText },
+  { name: 'Insights', href: '/dashboard/insights', icon: Lightbulb },
   { name: 'Configurações', href: '/dashboard/settings', icon: Settings },
 ]
 

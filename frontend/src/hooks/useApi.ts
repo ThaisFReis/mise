@@ -18,6 +18,15 @@ import type {
   ChannelPeakHour,
   ChannelTimeline,
   StorePerformance,
+  StoreComparison,
+  HeatmapData,
+  PeriodComparison,
+  TimelineData,
+  AutoInsight,
+  TimeGranularity,
+  ChannelComparisonData,
+  MonthlySummaryData,
+  StoreRankingData,
 } from '@/types'
 
 // Filter types
@@ -226,6 +235,18 @@ export function useStorePerformance(
   })
 }
 
+export function useStoreComparison(
+  filters: DateFilter,
+  options?: Omit<UseQueryOptions<StoreComparison[]>, 'queryKey' | 'queryFn'>
+) {
+  return useQuery({
+    queryKey: queryKeys.stores.comparison(filters),
+    queryFn: () => api.getStoreComparison(filters),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    ...options,
+  })
+}
+
 // Health check hook
 export function useHealthCheck(
   options?: Omit<UseQueryOptions<any>, 'queryKey' | 'queryFn'>
@@ -235,6 +256,164 @@ export function useHealthCheck(
     queryFn: () => api.healthCheck(),
     staleTime: 30 * 1000, // 30 seconds
     refetchInterval: 60 * 1000, // Refetch every minute
+    ...options,
+  })
+}
+
+// Insights hooks
+export interface InsightsFilters extends DateFilter {
+  storeId?: string
+  channelId?: string
+  metric?: 'revenue' | 'orders' | 'averageTicket'
+  granularity?: TimeGranularity
+}
+
+export interface PeriodComparisonFilters {
+  currentStart: string
+  currentEnd: string
+  previousStart: string
+  previousEnd: string
+  storeId?: string
+  channelId?: string
+}
+
+export function useHeatmapData(
+  filters: InsightsFilters,
+  options?: Omit<UseQueryOptions<HeatmapData[]>, 'queryKey' | 'queryFn'>
+) {
+  return useQuery({
+    queryKey: queryKeys.insights.heatmap(filters),
+    queryFn: () => api.getHeatmapData(filters),
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    ...options,
+  })
+}
+
+export function usePeriodComparison(
+  filters: PeriodComparisonFilters,
+  options?: Omit<UseQueryOptions<PeriodComparison>, 'queryKey' | 'queryFn'>
+) {
+  return useQuery({
+    queryKey: queryKeys.insights.periodComparison(filters),
+    queryFn: () => api.getPeriodComparison(filters),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    ...options,
+  })
+}
+
+export function useTimelineData(
+  filters: InsightsFilters,
+  options?: Omit<UseQueryOptions<TimelineData[]>, 'queryKey' | 'queryFn'>
+) {
+  return useQuery({
+    queryKey: queryKeys.insights.timeline(filters),
+    queryFn: () => api.getTimelineData(filters),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    ...options,
+  })
+}
+
+export function useAutoInsights(
+  filters: Omit<InsightsFilters, 'metric' | 'granularity'>,
+  options?: Omit<UseQueryOptions<AutoInsight[]>, 'queryKey' | 'queryFn'>
+) {
+  return useQuery({
+    queryKey: queryKeys.insights.autoInsights(filters),
+    queryFn: () => api.getAutoInsights(filters),
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    ...options,
+  })
+}
+
+// Reports hooks
+export interface ReportFilters extends DateFilter {
+  storeId?: string
+  channelId?: string
+  limit?: number
+}
+
+export function useTopProductsReport(
+  filters: ReportFilters,
+  options?: Omit<UseQueryOptions<TopProduct[]>, 'queryKey' | 'queryFn'>
+) {
+  return useQuery({
+    queryKey: queryKeys.reports.topProducts(filters),
+    queryFn: () => api.getTopProductsReport(filters),
+    staleTime: 15 * 60 * 1000, // 15 minutes
+    ...options,
+  })
+}
+
+export function usePeakHoursReport(
+  filters: Omit<ReportFilters, 'limit'>,
+  options?: Omit<UseQueryOptions<ChannelPeakHour[]>, 'queryKey' | 'queryFn'>
+) {
+  return useQuery({
+    queryKey: queryKeys.reports.peakHours(filters),
+    queryFn: () => api.getPeakHoursReport(filters),
+    staleTime: 15 * 60 * 1000, // 15 minutes
+    ...options,
+  })
+}
+
+export function useChannelComparisonReport(
+  filters: Omit<ReportFilters, 'channelId' | 'limit'>,
+  options?: Omit<UseQueryOptions<ChannelComparisonData[]>, 'queryKey' | 'queryFn'>
+) {
+  return useQuery({
+    queryKey: queryKeys.reports.channelComparison(filters),
+    queryFn: () => api.getChannelComparisonReport(filters),
+    staleTime: 15 * 60 * 1000, // 15 minutes
+    ...options,
+  })
+}
+
+export function useHighMarginProductsReport(
+  filters: ReportFilters,
+  options?: Omit<UseQueryOptions<TopProduct[]>, 'queryKey' | 'queryFn'>
+) {
+  return useQuery({
+    queryKey: queryKeys.reports.highMarginProducts(filters),
+    queryFn: () => api.getHighMarginProductsReport(filters),
+    staleTime: 15 * 60 * 1000, // 15 minutes
+    ...options,
+  })
+}
+
+export function useMonthlySummaryReport(
+  filters: Omit<ReportFilters, 'channelId' | 'limit'>,
+  options?: Omit<UseQueryOptions<MonthlySummaryData>, 'queryKey' | 'queryFn'>
+) {
+  return useQuery({
+    queryKey: queryKeys.reports.monthlySummary(filters),
+    queryFn: () => api.getMonthlySummaryReport(filters),
+    staleTime: 15 * 60 * 1000, // 15 minutes
+    ...options,
+  })
+}
+
+export function useStoreRankingReport(
+  filters: Pick<ReportFilters, 'startDate' | 'endDate'>,
+  options?: Omit<UseQueryOptions<StoreRankingData[]>, 'queryKey' | 'queryFn'>
+) {
+  return useQuery({
+    queryKey: queryKeys.reports.storeRanking(filters),
+    queryFn: () => api.getStoreRankingReport(filters),
+    staleTime: 15 * 60 * 1000, // 15 minutes
+    ...options,
+  })
+}
+
+// Custom Reports hook
+export function useCustomReport(
+  config: any,
+  options?: Omit<UseQueryOptions<any[]>, 'queryKey' | 'queryFn'>
+) {
+  return useQuery({
+    queryKey: queryKeys.customReports.generate(config),
+    queryFn: () => api.generateCustomReport(config),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    enabled: !!(config.metrics?.length && config.dimension && config.visualization), // Only run if config is complete
     ...options,
   })
 }

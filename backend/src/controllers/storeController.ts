@@ -30,6 +30,25 @@ export class StoreController {
       next(error);
     }
   }
+
+  async getStoreComparison(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { startDate, endDate } = req.query;
+
+      if (!startDate || !endDate) {
+        throw new AppError(400, 'startDate and endDate are required');
+      }
+
+      const comparison = await storeService.getStoreComparison({
+        startDate: startDate as string,
+        endDate: endDate as string,
+      });
+
+      res.json(comparison);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new StoreController();

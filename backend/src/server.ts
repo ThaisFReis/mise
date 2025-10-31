@@ -9,10 +9,12 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: env.corsOrigin,
-  credentials: true,
+  origin: env.nodeEnv === 'development' ? '*' : env.corsOrigin,
+  credentials: env.nodeEnv !== 'development',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

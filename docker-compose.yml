@@ -39,6 +39,42 @@ services:
     profiles:
       - tools
 
+  redis:
+    image: redis:7-alpine
+    container_name: godlevel-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: godlevel-backend
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://challenge:challenge_2024@postgres:5432/challenge_db
+      REDIS_URL: redis://redis:6379
+      PORT: 3001
+      NODE_ENV: development
+      CORS_ORIGIN: http://localhost:3000
+    volumes:
+      - ./backend/src:/app/src
+      - ./backend/prisma:/app/prisma
+    command: npm run dev
+
   pgadmin:
     image: dpage/pgadmin4:latest
     container_name: godlevel-pgadmin
@@ -55,5 +91,7 @@ services:
 
 volumes:
   postgres_data:
+    driver: local
+  redis_data:
     driver: local
 

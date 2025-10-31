@@ -15,6 +15,14 @@ import type {
   ChannelPeakHour,
   ChannelTimeline,
   StorePerformance,
+  StoreComparison,
+  HeatmapData,
+  PeriodComparison,
+  TimelineData,
+  AutoInsight,
+  ChannelComparisonData,
+  MonthlySummaryData,
+  StoreRankingData,
 } from '@/types'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
@@ -205,11 +213,184 @@ class ApiClient {
     })
   }
 
+  async getStoreComparison(filters: any): Promise<StoreComparison[]> {
+    const queryParams = this.buildQueryParams(filters)
+    return this.request<StoreComparison[]>(`/stores/comparison${queryParams}`, {
+      method: 'GET',
+    })
+  }
+
   // Health check endpoint
   async healthCheck(): Promise<any> {
     return this.request<any>('/health', {
       method: 'GET',
     })
+  }
+
+  // Insights endpoints
+  async getHeatmapData(filters: any): Promise<HeatmapData[]> {
+    const params = new URLSearchParams()
+    if (filters?.startDate) params.append('startDate', filters.startDate)
+    if (filters?.endDate) params.append('endDate', filters.endDate)
+    if (filters?.storeId) params.append('storeId', filters.storeId)
+    if (filters?.channelId) params.append('channelId', filters.channelId)
+    if (filters?.metric) params.append('metric', filters.metric)
+
+    const queryString = params.toString()
+    const response = await this.request<{ success: boolean; data: HeatmapData[] }>(
+      `/insights/heatmap${queryString ? `?${queryString}` : ''}`,
+      { method: 'GET' }
+    )
+    return response.data
+  }
+
+  async getPeriodComparison(filters: any): Promise<PeriodComparison> {
+    const params = new URLSearchParams()
+    if (filters?.currentStart) params.append('currentStart', filters.currentStart)
+    if (filters?.currentEnd) params.append('currentEnd', filters.currentEnd)
+    if (filters?.previousStart) params.append('previousStart', filters.previousStart)
+    if (filters?.previousEnd) params.append('previousEnd', filters.previousEnd)
+    if (filters?.storeId) params.append('storeId', filters.storeId)
+    if (filters?.channelId) params.append('channelId', filters.channelId)
+
+    const queryString = params.toString()
+    const response = await this.request<{ success: boolean; data: PeriodComparison }>(
+      `/insights/period-comparison${queryString ? `?${queryString}` : ''}`,
+      { method: 'GET' }
+    )
+    return response.data
+  }
+
+  async getTimelineData(filters: any): Promise<TimelineData[]> {
+    const params = new URLSearchParams()
+    if (filters?.startDate) params.append('startDate', filters.startDate)
+    if (filters?.endDate) params.append('endDate', filters.endDate)
+    if (filters?.storeId) params.append('storeId', filters.storeId)
+    if (filters?.channelId) params.append('channelId', filters.channelId)
+    if (filters?.granularity) params.append('granularity', filters.granularity)
+
+    const queryString = params.toString()
+    const response = await this.request<{ success: boolean; data: TimelineData[] }>(
+      `/insights/timeline${queryString ? `?${queryString}` : ''}`,
+      { method: 'GET' }
+    )
+    return response.data
+  }
+
+  async getAutoInsights(filters: any): Promise<AutoInsight[]> {
+    const params = new URLSearchParams()
+    if (filters?.startDate) params.append('startDate', filters.startDate)
+    if (filters?.endDate) params.append('endDate', filters.endDate)
+    if (filters?.storeId) params.append('storeId', filters.storeId)
+    if (filters?.channelId) params.append('channelId', filters.channelId)
+
+    const queryString = params.toString()
+    const response = await this.request<{ success: boolean; data: AutoInsight[] }>(
+      `/insights/auto-insights${queryString ? `?${queryString}` : ''}`,
+      { method: 'GET' }
+    )
+    return response.data
+  }
+
+  // Reports endpoints
+  async getTopProductsReport(filters: any): Promise<TopProduct[]> {
+    const params = new URLSearchParams()
+    if (filters?.startDate) params.append('startDate', filters.startDate)
+    if (filters?.endDate) params.append('endDate', filters.endDate)
+    if (filters?.storeId) params.append('storeId', filters.storeId)
+    if (filters?.channelId) params.append('channelId', filters.channelId)
+    if (filters?.limit) params.append('limit', filters.limit.toString())
+
+    const queryString = params.toString()
+    const response = await this.request<{ success: boolean; data: TopProduct[] }>(
+      `/reports/top-products${queryString ? `?${queryString}` : ''}`,
+      { method: 'GET' }
+    )
+    return response.data
+  }
+
+  async getPeakHoursReport(filters: any): Promise<ChannelPeakHour[]> {
+    const params = new URLSearchParams()
+    if (filters?.startDate) params.append('startDate', filters.startDate)
+    if (filters?.endDate) params.append('endDate', filters.endDate)
+    if (filters?.storeId) params.append('storeId', filters.storeId)
+    if (filters?.channelId) params.append('channelId', filters.channelId)
+
+    const queryString = params.toString()
+    const response = await this.request<{ success: boolean; data: ChannelPeakHour[] }>(
+      `/reports/peak-hours${queryString ? `?${queryString}` : ''}`,
+      { method: 'GET' }
+    )
+    return response.data
+  }
+
+  async getChannelComparisonReport(filters: any): Promise<ChannelComparisonData[]> {
+    const params = new URLSearchParams()
+    if (filters?.startDate) params.append('startDate', filters.startDate)
+    if (filters?.endDate) params.append('endDate', filters.endDate)
+    if (filters?.storeId) params.append('storeId', filters.storeId)
+
+    const queryString = params.toString()
+    const response = await this.request<{ success: boolean; data: ChannelComparisonData[] }>(
+      `/reports/channel-comparison${queryString ? `?${queryString}` : ''}`,
+      { method: 'GET' }
+    )
+    return response.data
+  }
+
+  async getHighMarginProductsReport(filters: any): Promise<TopProduct[]> {
+    const params = new URLSearchParams()
+    if (filters?.startDate) params.append('startDate', filters.startDate)
+    if (filters?.endDate) params.append('endDate', filters.endDate)
+    if (filters?.storeId) params.append('storeId', filters.storeId)
+    if (filters?.channelId) params.append('channelId', filters.channelId)
+    if (filters?.limit) params.append('limit', filters.limit.toString())
+
+    const queryString = params.toString()
+    const response = await this.request<{ success: boolean; data: TopProduct[] }>(
+      `/reports/high-margin-products${queryString ? `?${queryString}` : ''}`,
+      { method: 'GET' }
+    )
+    return response.data
+  }
+
+  async getMonthlySummaryReport(filters: any): Promise<MonthlySummaryData> {
+    const params = new URLSearchParams()
+    if (filters?.startDate) params.append('startDate', filters.startDate)
+    if (filters?.endDate) params.append('endDate', filters.endDate)
+    if (filters?.storeId) params.append('storeId', filters.storeId)
+
+    const queryString = params.toString()
+    const response = await this.request<{ success: boolean; data: MonthlySummaryData }>(
+      `/reports/monthly-summary${queryString ? `?${queryString}` : ''}`,
+      { method: 'GET' }
+    )
+    return response.data
+  }
+
+  async getStoreRankingReport(filters: any): Promise<StoreRankingData[]> {
+    const params = new URLSearchParams()
+    if (filters?.startDate) params.append('startDate', filters.startDate)
+    if (filters?.endDate) params.append('endDate', filters.endDate)
+
+    const queryString = params.toString()
+    const response = await this.request<{ success: boolean; data: StoreRankingData[] }>(
+      `/reports/store-ranking${queryString ? `?${queryString}` : ''}`,
+      { method: 'GET' }
+    )
+    return response.data
+  }
+
+  // Custom Reports endpoints
+  async generateCustomReport(config: any): Promise<any[]> {
+    const response = await this.request<{ success: boolean; data: any[] }>(
+      '/custom-reports',
+      {
+        method: 'POST',
+        body: config,
+      }
+    )
+    return response.data
   }
 }
 
@@ -239,6 +420,24 @@ export const queryKeys = {
   stores: {
     all: () => ['stores'] as const,
     performance: (filters: any) => ['stores', 'performance', filters] as const,
+    comparison: (filters: any) => ['stores', 'comparison', filters] as const,
+  },
+  insights: {
+    heatmap: (filters: any) => ['insights', 'heatmap', filters] as const,
+    periodComparison: (filters: any) => ['insights', 'period-comparison', filters] as const,
+    timeline: (filters: any) => ['insights', 'timeline', filters] as const,
+    autoInsights: (filters: any) => ['insights', 'auto-insights', filters] as const,
+  },
+  reports: {
+    topProducts: (filters: any) => ['reports', 'top-products', filters] as const,
+    peakHours: (filters: any) => ['reports', 'peak-hours', filters] as const,
+    channelComparison: (filters: any) => ['reports', 'channel-comparison', filters] as const,
+    highMarginProducts: (filters: any) => ['reports', 'high-margin-products', filters] as const,
+    monthlySummary: (filters: any) => ['reports', 'monthly-summary', filters] as const,
+    storeRanking: (filters: any) => ['reports', 'store-ranking', filters] as const,
+  },
+  customReports: {
+    generate: (config: any) => ['custom-reports', 'generate', config] as const,
   },
   health: () => ['health'] as const,
 } as const
