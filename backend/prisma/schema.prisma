@@ -63,10 +63,12 @@ model Store {
   creationDate   DateTime? @map("creation_date") @db.Date
   createdAt      DateTime  @default(now()) @map("created_at")
 
-  brand     Brand     @relation(fields: [brandId], references: [id])
-  subBrand  SubBrand? @relation(fields: [subBrandId], references: [id])
-  customers Customer[]
-  sales     Sale[]
+  brand             Brand              @relation(fields: [brandId], references: [id])
+  subBrand          SubBrand?          @relation(fields: [subBrandId], references: [id])
+  customers         Customer[]
+  sales             Sale[]
+  operatingExpenses OperatingExpense[]
+  fixedCosts        FixedCost[]
 
   @@map("stores")
 }
@@ -79,8 +81,9 @@ model Channel {
   type        String   @db.Char(1) // P=Presencial, D=Delivery
   createdAt   DateTime @default(now()) @map("created_at")
 
-  brand Brand @relation(fields: [brandId], references: [id])
-  sales Sale[]
+  brand              Brand               @relation(fields: [brandId], references: [id])
+  sales              Sale[]
+  channelCommissions ChannelCommission[]
 
   @@map("channels")
 }
@@ -112,10 +115,11 @@ model Product {
   posUuid     String?   @map("pos_uuid") @db.VarChar(100)
   deletedAt   DateTime? @map("deleted_at")
 
-  brand         Brand          @relation(fields: [brandId], references: [id])
-  subBrand      SubBrand?      @relation(fields: [subBrandId], references: [id])
-  category      Category?      @relation(fields: [categoryId], references: [id])
-  productSales  ProductSale[]
+  brand        Brand         @relation(fields: [brandId], references: [id])
+  subBrand     SubBrand?     @relation(fields: [subBrandId], references: [id])
+  category     Category?     @relation(fields: [categoryId], references: [id])
+  productSales ProductSale[]
+  productCosts ProductCost[]
 
   @@map("products")
 }
@@ -373,4 +377,90 @@ model CouponSale {
   coupon Coupon? @relation(fields: [couponId], references: [id])
 
   @@map("coupon_sales")
+}
+
+// ========== FINANCIAL MODELS (PHASE 1) ==========
+
+model ProductCost {
+  id         Int      @id @default(autoincrement())
+  productId  Int      @map("product_id")
+  cost       Decimal  @db.Decimal(10, 2)
+  validFrom  DateTime @default(now()) @map("valid_from")
+  validUntil DateTime? @map("valid_until")
+  supplierId Int?     @map("supplier_id")
+  notes      String?  @db.VarChar(500)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  product  Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  supplier Supplier? @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+
+  @@index([productId, validFrom])
+  @@index([supplierId])
+  @@map("product_costs")
+}
+
+model Supplier {
+  id           Int      @id @default(autoincrement())
+  name         String   @db.VarChar(255)
+  contact      String?  @db.VarChar(255)
+  email        String?  @db.VarChar(255)
+  phone        String?  @db.VarChar(50)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  productCosts ProductCost[]
+
+  @@map("suppliers")
+}
+
+model OperatingExpense {
+  id          Int      @id @default(autoincrement())
+  storeId     Int      @map("store_id")
+  category    String   @db.VarChar(100) // 'rent', 'labor', 'utilities', 'marketing', 'maintenance', 'other'
+  amount      Decimal  @db.Decimal(10, 2)
+  period      DateTime // Data de referência (ex: 2025-10-01 para despesas de outubro)
+  description String?  @db.VarChar(500)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@index([storeId, period])
+  @@index([category])
+  @@map("operating_expenses")
+}
+
+model FixedCost {
+  id          Int       @id @default(autoincrement())
+  storeId     Int       @map("store_id")
+  name        String    @db.VarChar(255) // 'Aluguel', 'Salários Fixos', etc
+  amount      Decimal   @db.Decimal(10, 2)
+  frequency   String    @db.VarChar(20) // 'monthly', 'quarterly', 'annual'
+  startDate   DateTime  @map("start_date")
+  endDate     DateTime? @map("end_date")
+  description String?   @db.VarChar(500)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@index([storeId, startDate])
+  @@map("fixed_costs")
+}
+
+model ChannelCommission {
+  id             Int       @id @default(autoincrement())
+  channelId      Int       @map("channel_id")
+  commissionRate Decimal   @db.Decimal(5, 2) // Ex: 25.50 para 25.5%
+  validFrom      DateTime  @default(now()) @map("valid_from")
+  validUntil     DateTime? @map("valid_until")
+  notes          String?   @db.VarChar(500)
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  channel Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+
+  @@index([channelId, validFrom])
+  @@map("channel_commissions")
 }
