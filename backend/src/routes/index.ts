@@ -7,6 +7,7 @@ import categoryRoutes from './categories';
 import insightsRoutes from './insights';
 import reportsRoutes from './reports';
 import customReportsRoutes from './customReports';
+import financialRoutes from './financial.routes';
 
 const router = Router();
 
@@ -18,6 +19,9 @@ router.use('/categories', categoryRoutes);
 router.use('/insights', insightsRoutes);
 router.use('/reports', reportsRoutes);
 router.use('/custom-reports', customReportsRoutes);
+
+// Phase 1: Financial Analysis routes
+router.use('/', financialRoutes);
 
 // Health check
 router.get('/health', (req, res) => {
