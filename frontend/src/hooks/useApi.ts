@@ -27,6 +27,9 @@ import type {
   ChannelComparisonData,
   MonthlySummaryData,
   StoreRankingData,
+  ProductCost,
+  Supplier,
+  CostHistory,
 } from '@/types'
 
 // Filter types
@@ -414,6 +417,55 @@ export function useCustomReport(
     queryFn: () => api.generateCustomReport(config),
     staleTime: 5 * 60 * 1000, // 5 minutes
     enabled: !!(config.metrics?.length && config.dimension && config.visualization), // Only run if config is complete
+    ...options,
+  })
+}
+
+// Financial Analysis hooks
+export interface CostFilters {
+  productId?: string
+  supplierId?: string
+  startDate?: string
+  endDate?: string
+}
+
+export interface SupplierFilters {
+  search?: string
+  isActive?: boolean
+}
+
+export function useCosts(
+  filters?: CostFilters,
+  options?: Omit<UseQueryOptions<ProductCost[]>, 'queryKey' | 'queryFn'>
+) {
+  return useQuery({
+    queryKey: queryKeys.financial.costs(filters),
+    queryFn: () => api.getCosts(filters),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    ...options,
+  })
+}
+
+export function useCostHistory(
+  productId?: string,
+  options?: Omit<UseQueryOptions<CostHistory[]>, 'queryKey' | 'queryFn'>
+) {
+  return useQuery({
+    queryKey: queryKeys.financial.costHistory(productId),
+    queryFn: () => api.getCostHistory(productId),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    ...options,
+  })
+}
+
+export function useSuppliers(
+  filters?: SupplierFilters,
+  options?: Omit<UseQueryOptions<Supplier[]>, 'queryKey' | 'queryFn'>
+) {
+  return useQuery({
+    queryKey: queryKeys.financial.suppliers(filters),
+    queryFn: () => api.getSuppliers(filters),
+    staleTime: 5 * 60 * 1000, // 5 minutes
     ...options,
   })
 }

@@ -464,3 +464,20 @@ model ChannelCommission {
   @@index([channelId, validFrom])
   @@map("channel_commissions")
 }
+
+// === CUSTOM DASHBOARDS ===
+
+model SavedDashboard {
+  id          String   @id @default(uuid())
+  name        String   @db.VarChar(255)
+  description String?  @db.VarChar(1000)
+  isTemplate  Boolean  @default(false) @map("is_template")
+  owner       String?  @db.VarChar(255) // User identifier (future: relate to User table)
+  config      Json     // Dashboard configuration (widgets, layout, filters)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([owner])
+  @@index([isTemplate])
+  @@map("saved_dashboards")
+}

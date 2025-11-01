@@ -926,6 +926,60 @@ npm install victory  # Se Recharts não atender gauge charts
 
 ---
 
+## 🆕 RECURSO ADICIONAL: Upload de Planilhas (Bulk Import)
+
+### Objetivo
+Permitir que administradores importem dados financeiros em massa através de planilhas Excel/CSV, facilitando a migração de dados existentes e cadastro em lote.
+
+### Componentes de Upload
+
+**1. BulkCostImport (Custos de Produtos)**
+- Template: `ProductID`, `Cost`, `ValidFrom`, `ValidUntil`, `SupplierID`, `Notes`
+- Validações: ProductID existe, Cost > 0, datas válidas
+- Endpoint: `POST /api/costs/products/bulk` (já implementado ✅)
+
+**2. SupplierBulkImport (Fornecedores)**
+- Template: `Name`, `Contact`, `Email`, `Phone`
+- Validações: Email válido, telefone formato BR
+- Endpoint: `POST /api/suppliers/bulk` (a implementar)
+
+**3. ExpenseBulkImport (Despesas Operacionais)**
+- Template: `StoreID`, `Category`, `Amount`, `Period`, `Description`
+- Validações: Category enum, Amount > 0
+- Endpoint: `POST /api/expenses/operating/bulk` (a implementar)
+
+**4. FixedCostBulkImport (Custos Fixos)**
+- Template: `StoreID`, `Name`, `Amount`, `Frequency`, `StartDate`
+- Validações: Frequency enum (monthly/quarterly/annual)
+- Endpoint: `POST /api/expenses/fixed/bulk` (a implementar)
+
+### Fluxo do Upload
+1. 📤 Usuário clica em "Importar Planilha"
+2. 📥 Download do template (opcional)
+3. 📂 Drag & drop ou seleção de arquivo (.xlsx, .xls, .csv)
+4. 👁️ Preview dos dados (primeiros 20 registros)
+5. ✅ Validação automática com feedback visual
+6. ✔️ Confirmação e envio
+7. ⚙️ Processamento (background se > 1000 registros)
+8. 📊 Feedback com resumo:
+   - ✅ X registros inseridos com sucesso
+   - ⚠️ Y registros com erros (detalhes)
+   - 📈 Total processado
+
+### Templates de Exemplo
+Cada template incluirá:
+- **Linha 1:** Cabeçalhos em negrito
+- **Linha 2:** Tipos de dados esperados (comentário)
+- **Linhas 3-5:** Exemplos preenchidos
+- **Formatação:** Células obrigatórias destacadas
+
+### Bibliotecas Necessárias
+```bash
+npm install xlsx react-dropzone @types/xlsx
+```
+
+---
+
 ## 🎯 Próximos Passos (Pós-Fase 1)
 
 Após completar a Fase 1 com sucesso:

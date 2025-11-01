@@ -3,14 +3,16 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { BarChart3, Package, Store, TrendingUp, FileText, Settings, ChartPie, Lightbulb } from 'lucide-react'
+import { BarChart3, Package, Store, TrendingUp, FileText, Settings, ChartPie, Lightbulb, DollarSign, Wand2 } from 'lucide-react'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: BarChart3 },
+  { name: 'Query Builder', href: '/dashboard/query-builder', icon: Wand2 },
   { name: 'Produtos', href: '/dashboard/products', icon: Package },
   { name: 'Canais', href: '/dashboard/channels', icon: TrendingUp },
   { name: 'Lojas', href: '/dashboard/stores', icon: Store },
+  { name: 'Financeiro', href: '/dashboard/financial/costs', icon: DollarSign },
   { name: 'Insights', href: '/dashboard/insights', icon: Lightbulb },
   { name: 'Configurações', href: '/dashboard/settings', icon: Settings },
 ]
