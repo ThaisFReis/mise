@@ -7,7 +7,8 @@ import { Loader2, Play, Save } from 'lucide-react';
 import { MetricSelector } from '@/components/query-builder/MetricSelector';
 import { DimensionSelector } from '@/components/query-builder/DimensionSelector';
 import { ResultsTable } from '@/components/query-builder/ResultsTable';
-import { useApi } from '@/hooks/useApi';
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
 interface QueryConfig {
   metrics: string[];
@@ -24,8 +25,8 @@ interface Metadata {
 }
 
 export default function QueryBuilderPage() {
-  const { post, get, loading, error } = useApi();
-
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [metadata, setMetadata] = useState<Metadata | null>(null);
   const [config, setConfig] = useState<QueryConfig>({
     metrics: [],
@@ -40,9 +41,18 @@ export default function QueryBuilderPage() {
   }, []);
 
   const loadMetadata = async () => {
-    const data = await get('/query-builder/metadata');
-    if (data?.data) {
-      setMetadata(data.data);
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_BASE_URL}/query-builder/metadata`);
+      const json = await response.json();
+
+      if (json.success && json.data) {
+        setMetadata(json.data);
+      }
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -52,11 +62,30 @@ export default function QueryBuilderPage() {
       return;
     }
 
-    const result = await post('/query-builder/execute', config);
+    try {
+      setLoading(true);
+      setError(null);
 
-    if (result?.data) {
-      setResults(result.data);
-      setExecutionTime(result.metadata?.executionTime || 0);
+      const response = await fetch(`${API_BASE_URL}/query-builder/execute`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(config),
+      });
+
+      const json = await response.json();
+
+      if (json.success && json.data) {
+        setResults(json.data);
+        setExecutionTime(json.metadata?.executionTime || 0);
+      } else {
+        setError(json.error || 'Erro ao executar query');
+      }
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
