@@ -168,8 +168,8 @@ Transformar a plataforma Mise de um dashboard de vendas em um **sistema completo
 
 ---
 
-#### **DIA 5: Frontend - Cost Management UI (Parte 2)**
-**Foco:** Histórico, gráficos e import
+#### **DIA 5: Frontend - Cost Management UI (Parte 2) + ADICIONAL: Planilha Upload**
+**Foco:** Histórico, gráficos, import e upload de planilha
 
 **Frontend**
 
@@ -192,13 +192,38 @@ Transformar a plataforma Mise de um dashboard de vendas em um **sistema completo
 - [ ] Tooltip customizado
 - [ ] Responsivo
 
-**Componente: BulkCostImport.tsx**
-- [ ] Upload de arquivo (drag & drop)
-- [ ] Suporte CSV e Excel
-- [ ] Preview dos dados antes de salvar
-- [ ] Validação de formato
-- [ ] Feedback de erros linha por linha
-- [ ] Template de exemplo para download
+**🆕 ADICIONAL: Componente: BulkCostImport.tsx** (Upload de Planilha)
+- [ ] Upload de arquivo (drag & drop com react-dropzone)
+- [ ] Suporte CSV e Excel (.xlsx, .xls) usando biblioteca `xlsx`
+- [ ] Preview dos dados antes de salvar (tabela com primeiros 10-20 registros)
+- [ ] Validação de formato e dados linha por linha (Zod)
+- [ ] Mensagens de erro detalhadas (linha X: campo Y inválido)
+- [ ] Template de exemplo para download (.xlsx com colunas e exemplos)
+- [ ] Barra de progresso durante processamento
+- [ ] Opção de cancelar upload
+- [ ] Feedback de sucesso/erro com resumo:
+  - ✅ X custos inseridos com sucesso
+  - ⚠️ Y custos com erros (listar)
+  - 📊 Total de linhas processadas
+- [ ] Validações específicas:
+  - [ ] ProductID deve existir no banco
+  - [ ] Cost deve ser número positivo
+  - [ ] Datas válidas (formato ISO ou BR)
+  - [ ] SupplierID opcional mas validado se fornecido
+  - [ ] Notes máximo 500 caracteres
+
+**🆕 ADICIONAL: Componente: SupplierBulkImport.tsx** (Upload de Fornecedores)
+- [ ] Mesma estrutura do BulkCostImport
+- [ ] Template com colunas: Nome, Contato, Email, Telefone
+- [ ] Validação de email
+- [ ] Validação de telefone (formato brasileiro)
+
+**🆕 ADICIONAL: Componente: ExpenseBulkImport.tsx** (Upload de Despesas)
+- [ ] Upload de despesas operacionais em massa
+- [ ] Template com: Loja, Categoria, Valor, Período, Descrição
+- [ ] Validação de categoria (labor, rent, utilities, marketing, maintenance, other)
+- [ ] Validação de período (formato de data)
+- [ ] Agrupamento por mês automático
 
 **Integração**
 - [ ] Conectar todos os componentes à API
@@ -715,14 +740,17 @@ zod
 
 ### Frontend
 ```bash
-# Instalar
+# Instalar - Básico
 npm install recharts
 npm install @tanstack/react-table
 npm install react-hook-form
 npm install zod
 npm install date-fns
-npm install xlsx
-npm install react-dropzone
+
+# 🆕 ADICIONAL - Upload de Planilha
+npm install xlsx               # Parse Excel e CSV
+npm install react-dropzone     # Drag & drop de arquivos
+npm install @types/xlsx -D     # Types para TypeScript
 
 # Para gráficos avançados (opcional)
 npm install victory  # Se Recharts não atender gauge charts
