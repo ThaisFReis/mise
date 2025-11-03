@@ -25,7 +25,7 @@ export function Sidebar() {
 
 
       {/* Navigation */}
-      <nav className="group/nav shadow-gray-soft mx-auto flex w-fit h-fit flex-1 flex-col items-center space-y-2 rounded-full bg-primary px-3 py-8 transition duration-500 ease-in-out hover:rounded-2xl" aria-label="Navegação principal">
+      <nav className="group/nav shadow-gray-soft mx-auto flex w-16 flex-1 flex-col items-center space-y-2 rounded-[32px] bg-primary py-8 transition-all duration-500 ease-out hover:w-[190px]" aria-label="Navegação principal">
         <div className='mt-0 mb-24'>
           {navigation.map((item) => {
             const isActive = pathname === item.href
@@ -33,21 +33,21 @@ export function Sidebar() {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`relative mx-auto flex h-10 w-10 items-center justify-center rounded-full p-2 text-sm font-medium transition-all duration-500 ease-in-out mb-2 ${
+                className={`relative mx-auto mb-2 flex h-10 w-10 items-center rounded-full p-2 text-sm font-medium transition-all duration-300 ease-out group-hover/nav:w-full group-hover/nav:rounded-xl ${
                   isActive
                     ? 'bg-background-secondary text-foreground'
                     : 'hover:bg-accent text-primary-foreground'
-                } group-hover/nav:w-full group-hover/nav:justify-start group-hover/nav:gap-3 group-hover/nav:rounded-xl group-hover/nav:px-4`}
+                }`}
                 onClick={() => setIsOpen(false)}
                 aria-current={isActive ? 'page' : undefined}
                 aria-label={item.name}
               >
                 <item.icon
-                  className="h-5 w-5 flex-shrink-0 transition-all duration-500 ease-in-out"
+                  className="absolute left-1/2 top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ease-out group-hover/nav:left-[14px] group-hover/nav:translate-x-0"
                   strokeWidth={2}
                   aria-hidden="true"
                 />
-                <span className="group-hover/nav:duration-400 pointer-events-none absolute whitespace-nowrap opacity-0 transition-opacity duration-150 ease-out group-hover/nav:pointer-events-auto group-hover/nav:static group-hover/nav:opacity-100 group-hover/nav:delay-100">
+                <span className="ml-10 whitespace-nowrap opacity-0 transition-opacity duration-300 ease-out group-hover/nav:opacity-100 group-hover/nav:delay-200">
                   {item.name}
                 </span>
               </Link>
@@ -56,7 +56,7 @@ export function Sidebar() {
         </div>
 
         {/* Theme Toggle at bottom */}
-        <div className="mb-0 mt-auto flex items-center justify-center p-2 bg-background text-foreground rounded-full h-10 w-10" aria-label="Alternar tema">
+        <div className="mb-0 mt-auto flex h-10 w-10 items-center justify-center rounded-full bg-background p-2 text-foreground">
           <ThemeToggle />
         </div>
       </nav>
