@@ -83,7 +83,7 @@ export async function getPeriodComparisonData(req: Request, res: Response) {
       channelId ? parseInt(channelId as string) : undefined
     );
 
-    res.json({
+    return res.json({
       success: true,
       data: comparison,
       periods: {
@@ -93,7 +93,7 @@ export async function getPeriodComparisonData(req: Request, res: Response) {
     });
   } catch (error) {
     console.error('Error fetching period comparison:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: 'Failed to fetch period comparison',
     });

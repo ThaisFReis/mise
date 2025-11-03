@@ -117,7 +117,7 @@ class QueryBuilderController {
    */
   async validate(req: Request, res: Response): Promise<void> {
     try {
-      const config = QueryConfigSchema.parse(req.body);
+      QueryConfigSchema.parse(req.body);
 
       res.status(200).json({
         success: true,
@@ -147,7 +147,7 @@ class QueryBuilderController {
    * GET /api/query-builder/metadata
    * Retorna metadata: métricas e dimensões disponíveis
    */
-  async getMetadata(req: Request, res: Response): Promise<void> {
+  async getMetadata(_req: Request, res: Response): Promise<void> {
     try {
       res.status(200).json({
         success: true,
