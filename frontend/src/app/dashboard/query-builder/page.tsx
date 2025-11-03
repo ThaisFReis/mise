@@ -265,50 +265,50 @@ export default function QueryBuilderPage() {
 
   if (!metadata) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center min-h-screen p-4">
         <Loader2 className="w-8 h-8 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="p-6 space-y-6 max-w-[1600px] mx-auto">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 max-w-[1600px] mx-auto">
+      {/* Header - Responsive: Stack vertically on mobile, horizontal on larger screens */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 gap-4 sm:gap-0">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Construtor de Consultas</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Construtor de Consultas</h1>
           <p className="text-muted-foreground text-sm mt-1">
             Crie análises personalizadas sem escrever código
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {loading ? (
             <Button
               onClick={handleCancelExecution}
               variant="destructive"
-              className="flex items-center gap-2 transition-all duration-300"
+              className="flex items-center gap-2 transition-all duration-300 min-w-fit"
             >
               <StopCircle className="w-4 h-4" />
-              Cancelar
+              <span className="hidden sm:inline">Cancelar</span>
             </Button>
           ) : (
             <Button
               onClick={handleExecute}
               disabled={config.metrics.length === 0}
-              className="flex items-center gap-2 bg-primary hover:bg-primary/90 transition-all duration-300"
+              className="flex items-center gap-2 bg-primary hover:bg-primary/90 transition-all duration-300 min-w-fit"
             >
               <Play className="w-4 h-4" />
-              Executar
+              <span className="hidden sm:inline">Executar</span>
             </Button>
           )}
           <Button
             onClick={handleSaveQuery}
             disabled={config.metrics.length === 0}
             variant="outline"
-            className="flex items-center gap-2 transition-all duration-300"
+            className="flex items-center gap-2 transition-all duration-300 min-w-fit"
           >
             <Save className="w-4 h-4" />
-            Salvar
+            <span className="hidden sm:inline">Salvar</span>
           </Button>
           <QueryHistoryDropdown
             onLoadQuery={handleLoadQuery}
@@ -341,11 +341,11 @@ export default function QueryBuilderPage() {
         onChange={handleDateRangeChange}
       />
 
-      {/* Configuration Panel */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Configuration Panel - Responsive: Single column on mobile, two columns on large screens */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Metrics Selector */}
-        <Card className="p-6 rounded-2xl bg-card shadow-gray-soft hover:scale-[1.01] transition-all duration-500">
-          <h3 className="font-semibold text-foreground mb-4 flex items-center justify-between">
+        <Card className="p-4 sm:p-6 rounded-2xl bg-card shadow-gray-soft hover:scale-[1.01] transition-all duration-500">
+          <h3 className="font-semibold text-foreground mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-0">
             <span>Métricas</span>
             <span className="text-xs text-muted-foreground font-normal">
               {config.metrics.length} selecionadas
@@ -359,8 +359,8 @@ export default function QueryBuilderPage() {
         </Card>
 
         {/* Dimensions Selector */}
-        <Card className="p-6 rounded-2xl bg-card shadow-gray-soft hover:scale-[1.01] transition-all duration-500">
-          <h3 className="font-semibold text-foreground mb-4 flex items-center justify-between">
+        <Card className="p-4 sm:p-6 rounded-2xl bg-card shadow-gray-soft hover:scale-[1.01] transition-all duration-500">
+          <h3 className="font-semibold text-foreground mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-0">
             <span>Dimensões</span>
             <span className="text-xs text-muted-foreground font-normal">
               {config.dimensions?.length || 0} selecionadas
@@ -374,9 +374,9 @@ export default function QueryBuilderPage() {
         </Card>
       </div>
 
-      {/* Info Panel */}
+      {/* Info Panel - Responsive: Stack vertically on small screens */}
       {(executionTime > 0 || results.length > 0) && (
-        <div className="flex gap-6 text-xs text-muted-foreground px-1">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-6 text-xs text-muted-foreground px-1">
           <div>
             <span className="font-medium text-foreground">{executionTime}ms</span> execução
           </div>
@@ -386,18 +386,18 @@ export default function QueryBuilderPage() {
         </div>
       )}
 
-      {/* Results */}
+      {/* Results - Responsive: Adjust padding */}
       {error && (
-        <Card className="p-6 rounded-2xl bg-destructive/10 border-destructive/20 shadow-gray-soft">
+        <Card className="p-4 sm:p-6 rounded-2xl bg-destructive/10 border-destructive/20 shadow-gray-soft">
           <p className="text-destructive text-sm">{error}</p>
         </Card>
       )}
 
       {results.length > 0 && (
         <Card ref={resultsRef} className="rounded-2xl bg-card shadow-gray-soft overflow-visible">
-          {/* View Mode Tabs */}
-          <div className="flex items-center justify-between border-b border-border px-6 pt-4 sticky top-0 bg-card z-10 overflow-visible">
-            <div className="flex gap-1">
+          {/* View Mode Tabs - Responsive: Horizontal scroll on small screens, wrap on larger */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-border px-4 sm:px-6 pt-4 sticky top-0 bg-card z-10 overflow-visible gap-4 sm:gap-0">
+            <div className="flex overflow-x-auto sm:overflow-visible gap-1 pb-2 sm:pb-0">
               <ChartTypeTab
                 icon={Table}
                 label="Tabela"
@@ -434,7 +434,7 @@ export default function QueryBuilderPage() {
                 onClick={() => setViewMode('kpi')}
               />
             </div>
-            <div className="pb-2">
+            <div className="pb-2 sm:pb-0">
               <ExportMenu
                 data={results}
                 filename="resultados-consulta"
@@ -444,8 +444,8 @@ export default function QueryBuilderPage() {
             </div>
           </div>
 
-          {/* Content Area */}
-          <div className="p-6 max-h-[800px] overflow-y-auto overflow-x-hidden">
+          {/* Content Area - Responsive: Adjust padding and max height */}
+          <div className="p-4 sm:p-6 max-h-[600px] sm:max-h-[800px] overflow-y-auto overflow-x-hidden">
             {viewMode === 'table' && (
               <ResultsTable key={executionTime} data={results} />
             )}
@@ -462,8 +462,8 @@ export default function QueryBuilderPage() {
       )}
 
       {results.length === 0 && !loading && (
-        <Card className="p-16 text-center rounded-2xl bg-card shadow-gray-soft">
-          <p className="text-muted-foreground">
+        <Card className="p-8 sm:p-16 text-center rounded-2xl bg-card shadow-gray-soft">
+          <p className="text-muted-foreground text-sm sm:text-base">
             Selecione métricas e clique em "Executar" para ver os resultados
           </p>
         </Card>
