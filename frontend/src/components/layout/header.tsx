@@ -1,18 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { Search, User, ChartPie, Menu } from 'lucide-react'
+import { Search, User, ChartPie } from 'lucide-react'
 import { SearchModal } from './search-modal'
-import { useSidebar } from '@/store/sidebar-store'
-import { Button } from '../ui/button'
 
 export function Header() {
-  const { isMobileMenuOpen, setIsMobileMenuOpen } = useSidebar()
-  const [isScrolled, setIsScrolled] = useState(false)
-  const pathname = usePathname()
-
   const [isSearchOpen, setIsSearchOpen] = useState(false)
 
   // Global keyboard shortcut (Cmd/Ctrl + K)
@@ -28,72 +21,41 @@ export function Header() {
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [])
 
-  // Handle scroll effect
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
-    }
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
-  // Close mobile menu on route change
-  useEffect(() => {
-    if (isMobileMenuOpen) {
-      setIsMobileMenuOpen(false)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname])
-
   return (
     <>
       <header
-        className={`sticky top-0 z-30 flex h-20 w-full items-center justify-between px-4 transition-all duration-300 md:px-8 ${
-          isScrolled ? 'border-b bg-background/80 backdrop-blur-sm' : 'bg-transparent'
-        }`}
+        className="hidden h-fit w-screen items-center justify-between pb-6 pr-8 pt-8 md:flex"
         role="banner"
       >
-        <div className="flex items-center gap-4">
-          {/* Mobile Menu Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsMobileMenuOpen(true)}
-            className="md:hidden"
-            aria-label="Abrir menu"
+        {/* Logo */}
+        <Link href="/" className="group flex items-center gap-4">
+          <div
+            className="ml-16 flex h-14 w-14 items-center justify-center rounded-full bg-background-secondary p-3 text-primary shadow-gray-soft transition-transform group-hover:scale-110"
+            aria-hidden="true"
           >
-            <Menu className="h-6 w-6" />
-          </Button>
-
-          {/* Logo */}
-          <Link href="/" className="group hidden items-center gap-2 md:flex">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-background-secondary p-2 text-primary shadow-gray-soft transition-transform group-hover:scale-110">
-              <ChartPie className="h-full w-full" />
-            </div>
-            <span className="w-0 origin-left scale-x-0 bg-gradient-to-r from-primary to-accent bg-clip-text text-xl font-bold text-transparent transition-all duration-300 group-hover:w-auto group-hover:scale-x-100">
-              Mise
-            </span>
-          </Link>
-        </div>
-
-        <div className="flex items-center space-x-2 md:space-x-4">
-          <div className="hidden md:flex">
-            <button
-              onClick={() => setIsSearchOpen(true)}
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-background-secondary p-2 text-muted-foreground shadow-gray-soft transition-colors hover:text-foreground"
-              aria-label="Buscar (Ctrl+K)"
-              title="Buscar (Ctrl+K)"
-            >
-              <Search className="h-5 w-5" aria-hidden="true" />
-            </button>
+            <ChartPie className="h-full w-full" aria-hidden="true" />
           </div>
+          <span className="w-0 -translate-x-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-2xl font-bold text-transparent opacity-0 transition-all duration-700 ease-out group-hover:w-auto group-hover:translate-x-0 group-hover:opacity-100">
+            Mise
+          </span>
+        </Link>
+
+        <div className="ml-auto mr-0 flex items-center space-x-4">
+          <button
+            onClick={() => setIsSearchOpen(true)}
+            className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-background-secondary p-2 text-muted-foreground shadow-gray-soft transition-colors hover:text-foreground"
+            aria-label="Buscar (Ctrl+K)"
+            title="Buscar (Ctrl+K)"
+          >
+            <Search className="h-5 w-5" aria-hidden="true" />
+          </button>
 
           <button
             className="flex items-center space-x-3 pl-3"
             aria-label="Menu do usuário - Maria Silva"
             title="Menu do usuário"
           >
-            <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-gray-soft">
+            <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-gray-soft">
               <User className="h-5 w-5" aria-hidden="true" />
             </div>
             <div className="hidden flex-col md:flex">

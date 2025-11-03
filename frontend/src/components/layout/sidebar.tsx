@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { BarChart3, Package, Store, TrendingUp, Lightbulb, Wand2, HelpCircle, X, ChartPie } from 'lucide-react'
+import { BarChart3, Package, Store, TrendingUp, Lightbulb, Wand2, HelpCircle, X, ChartPie, Menu } from 'lucide-react'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { useSidebar } from '@/store/sidebar-store'
 import { Button } from '@/components/ui/button'
