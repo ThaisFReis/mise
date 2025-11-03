@@ -251,7 +251,7 @@ class DashboardController {
           name: name || `${original.name} (cópia)`,
           description: original.description,
           owner: owner || original.owner,
-          config: original.config,
+          config: original.config as any,
           isTemplate: false,
         },
       });
@@ -274,7 +274,7 @@ class DashboardController {
    * GET /api/dashboards/templates
    * Lista templates disponíveis
    */
-  async getTemplates(req: Request, res: Response): Promise<void> {
+  async getTemplates(_req: Request, res: Response): Promise<void> {
     try {
       res.status(200).json({
         success: true,
