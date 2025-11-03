@@ -18,6 +18,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  TableFooter,
 } from '@/components/ui/table'
 import { StoreComparison } from '@/types'
 import { ArrowUpDown, ChevronDown, ChevronRight, Clock } from 'lucide-react'
@@ -51,8 +52,27 @@ export function StoreComparisonTable({ data, isLoading }: StoreComparisonTablePr
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
   }
 
+  const totalRevenue = data.reduce((sum, store) => sum + store.revenue, 0)
+  const totalSales = data.reduce((sum, store) => sum + store.totalSales, 0)
+  const averageTicket = data.length > 0 ? data.reduce((sum, store) => sum + store.averageTicket, 0) / data.length : 0
+  const averagePrepTime = data.length > 0 ? data.reduce((sum, store) => sum + store.averagePrepTime, 0) / data.length : 0
+
   const columns = useMemo<ColumnDef<StoreComparison>[]>(
     () => [
+      {
+        id: 'ranking',
+        header: '#',
+        cell: ({ row }) => {
+          const sortedData = [...data].sort((a, b) => b.revenue - a.revenue)
+          const rank = sortedData.findIndex(store => store.storeId === row.original.storeId) + 1
+          return (
+            <div className="flex items-center justify-center text-sm font-medium text-muted-foreground">
+              {rank}
+            </div>
+          )
+        },
+        size: 50,
+      },
       {
         id: 'expander',
         header: () => null,
@@ -70,6 +90,7 @@ export function StoreComparisonTable({ data, isLoading }: StoreComparisonTablePr
             </button>
           ) : null
         },
+        size: 40,
       },
       {
         accessorKey: 'storeName',
@@ -101,7 +122,11 @@ export function StoreComparisonTable({ data, isLoading }: StoreComparisonTablePr
         },
         cell: ({ row }) => {
           const value = row.getValue('revenue') as number
-          return <div className="text-right font-medium">{formatCurrency(value)}</div>
+          return (
+            <div className="text-right font-medium">
+              {formatCurrency(value)}
+            </div>
+          )
         },
       },
       {
@@ -119,7 +144,11 @@ export function StoreComparisonTable({ data, isLoading }: StoreComparisonTablePr
         },
         cell: ({ row }) => {
           const value = row.getValue('totalSales') as number
-          return <div className="text-right">{formatNumber(value)}</div>
+          return (
+            <div className="text-right font-medium">
+              {formatNumber(value)}
+            </div>
+          )
         },
       },
       {
@@ -137,7 +166,11 @@ export function StoreComparisonTable({ data, isLoading }: StoreComparisonTablePr
         },
         cell: ({ row }) => {
           const value = row.getValue('averageTicket') as number
-          return <div className="text-right">{formatCurrency(value)}</div>
+          return (
+            <div className="text-right font-medium">
+              {formatCurrency(value)}
+            </div>
+          )
         },
       },
       {
@@ -156,11 +189,15 @@ export function StoreComparisonTable({ data, isLoading }: StoreComparisonTablePr
         },
         cell: ({ row }) => {
           const value = row.getValue('averagePrepTime') as number
-          return <div className="text-right">{formatTime(value)}</div>
+          return (
+            <div className="text-right font-medium">
+              {formatTime(value)}
+            </div>
+          )
         },
       },
     ],
-    []
+    [data, totalRevenue, totalSales]
   )
 
   const table = useReactTable({
@@ -180,10 +217,11 @@ export function StoreComparisonTable({ data, isLoading }: StoreComparisonTablePr
 
   if (isLoading) {
     return (
-      <div className="rounded-md border">
+      <div className="rounded-lg border border-border/50 bg-card">
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-12">#</TableHead>
               <TableHead className="w-12"></TableHead>
               <TableHead>Loja</TableHead>
               <TableHead>Faturamento</TableHead>
@@ -195,7 +233,7 @@ export function StoreComparisonTable({ data, isLoading }: StoreComparisonTablePr
           <TableBody>
             {[1, 2, 3, 4, 5].map((i) => (
               <TableRow key={i}>
-                <TableCell colSpan={6}>
+                <TableCell colSpan={7}>
                   <div className="h-8 w-full animate-pulse bg-muted rounded" />
                 </TableCell>
               </TableRow>
@@ -207,7 +245,7 @@ export function StoreComparisonTable({ data, isLoading }: StoreComparisonTablePr
   }
 
   return (
-    <div className="rounded-md border">
+    <div className="rounded-lg border border-border/50 bg-card">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -229,7 +267,6 @@ export function StoreComparisonTable({ data, isLoading }: StoreComparisonTablePr
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className="hover:bg-muted/50"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -239,17 +276,17 @@ export function StoreComparisonTable({ data, isLoading }: StoreComparisonTablePr
                 </TableRow>
                 {row.getIsExpanded() && (
                   <TableRow>
-                    <TableCell colSpan={columns.length} className="bg-muted/30 p-4">
-                      <div className="space-y-2">
-                        <h4 className="font-semibold text-sm mb-3">Top 5 Produtos</h4>
-                        <div className="grid gap-2">
+                    <TableCell colSpan={columns.length + 1} className="bg-muted/20 p-4">
+                      <div className="space-y-3">
+                        <h4 className="font-medium text-sm">Top Produtos</h4>
+                        <div className="grid gap-3">
                           {row.original.topProducts.map((product, idx) => (
                             <div
                               key={product.id}
-                              className="flex items-center justify-between text-sm border-b pb-2 last:border-0"
+                              className="flex items-center justify-between text-sm"
                             >
-                              <div className="flex items-center gap-2">
-                                <span className="font-medium text-muted-foreground">
+                              <div className="flex items-center gap-3">
+                                <span className="text-muted-foreground w-4">
                                   {idx + 1}.
                                 </span>
                                 <div>
@@ -259,7 +296,7 @@ export function StoreComparisonTable({ data, isLoading }: StoreComparisonTablePr
                                   </div>
                                 </div>
                               </div>
-                              <div className="flex items-center gap-4 text-right">
+                              <div className="flex items-center gap-6 text-right">
                                 <div>
                                   <div className="text-xs text-muted-foreground">Qtd</div>
                                   <div className="font-medium">{formatNumber(product.quantity)}</div>
@@ -288,12 +325,23 @@ export function StoreComparisonTable({ data, isLoading }: StoreComparisonTablePr
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell colSpan={columns.length + 1} className="h-24 text-center">
                 Nenhum dado encontrado.
               </TableCell>
             </TableRow>
           )}
         </TableBody>
+        <TableFooter>
+          <TableRow className="bg-muted/30 font-medium">
+            <TableCell className="text-center">Total</TableCell>
+            <TableCell></TableCell>
+            <TableCell>{data.length} Lojas</TableCell>
+            <TableCell className="text-right">{formatCurrency(totalRevenue)}</TableCell>
+            <TableCell className="text-right">{formatNumber(totalSales)}</TableCell>
+            <TableCell className="text-right">{formatCurrency(averageTicket)}</TableCell>
+            <TableCell className="text-right">{formatTime(averagePrepTime)}</TableCell>
+          </TableRow>
+        </TableFooter>
       </Table>
     </div>
   )

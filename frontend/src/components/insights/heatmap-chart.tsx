@@ -1,8 +1,10 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { HeatmapData } from '@/types'
 import { formatCurrency } from '@/lib/utils'
+import { Badge } from '@/components/ui/badge'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 interface HeatmapChartProps {
   data: HeatmapData[]
@@ -14,14 +16,49 @@ const dayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
 const hours = Array.from({ length: 24 }, (_, i) => i)
 
 export function HeatmapChart({ data, metric, loading }: HeatmapChartProps) {
-  // Calculate min and max values for color scale
-  const { minValue, maxValue } = useMemo(() => {
+  const [hoveredCell, setHoveredCell] = useState<{ day: number; hour: number } | null>(null)
+
+  // Calculate statistics
+  const stats = useMemo(() => {
+    if (!data.length) return null
+
     const values = data.map(d => d.value).filter(v => v > 0)
+    const total = values.reduce((sum, v) => sum + v, 0)
+    const avg = total / values.length
+
+    // Daily averages
+    const dailyTotals = dayNames.map((_, dayIndex) => {
+      const dayData = data.filter(d => d.dayOfWeek === dayIndex && d.value > 0)
+      return dayData.length > 0 ? dayData.reduce((sum, d) => sum + d.value, 0) / dayData.length : 0
+    })
+
+    // Hourly averages
+    const hourlyTotals = hours.map(hour => {
+      const hourData = data.filter(d => d.hour === hour && d.value > 0)
+      return hourData.length > 0 ? hourData.reduce((sum, d) => sum + d.value, 0) / hourData.length : 0
+    })
+
+    // Find peaks
+    const maxDaily = Math.max(...dailyTotals)
+    const maxHourly = Math.max(...hourlyTotals)
+    const peakDays = dailyTotals.map((val, idx) => val === maxDaily ? idx : -1).filter(idx => idx !== -1)
+    const peakHours = hourlyTotals.map((val, idx) => val === maxHourly ? idx : -1).filter(idx => idx !== -1)
+
     return {
+      total,
+      avg,
+      dailyTotals,
+      hourlyTotals,
+      maxDaily,
+      maxHourly,
+      peakDays,
+      peakHours,
       minValue: Math.min(...values),
       maxValue: Math.max(...values),
     }
   }, [data])
+
+  const { minValue, maxValue } = stats || { minValue: 0, maxValue: 0 }
 
   // Get color intensity based on value
   const getColorIntensity = (value: number): string => {
@@ -29,11 +66,30 @@ export function HeatmapChart({ data, metric, loading }: HeatmapChartProps) {
 
     const normalizedValue = (value - minValue) / (maxValue - minValue)
 
-    if (normalizedValue < 0.2) return 'bg-blue-200 dark:bg-blue-900/40'
-    if (normalizedValue < 0.4) return 'bg-blue-300 dark:bg-blue-800/50'
-    if (normalizedValue < 0.6) return 'bg-blue-400 dark:bg-blue-700/60'
-    if (normalizedValue < 0.8) return 'bg-blue-500 dark:bg-blue-600/70'
-    return 'bg-blue-600 dark:bg-blue-500/80'
+    if (normalizedValue < 0.2) return 'bg-blue-100 dark:bg-blue-950/30'
+    if (normalizedValue < 0.4) return 'bg-blue-200 dark:bg-blue-900/40'
+    if (normalizedValue < 0.6) return 'bg-blue-300 dark:bg-blue-800/50'
+    if (normalizedValue < 0.8) return 'bg-blue-400 dark:bg-blue-700/60'
+    return 'bg-blue-500 dark:bg-blue-600/70'
+  }
+
+  // Get comparative data for tooltip
+  const getComparativeData = (day: number, hour: number) => {
+    if (!stats) return null
+
+    const currentValue = getValue(day, hour)
+    const dayAvg = stats.dailyTotals[day]
+    const hourAvg = stats.hourlyTotals[hour]
+
+    return {
+      currentValue,
+      dayAvg,
+      hourAvg,
+      dayComparison: currentValue > dayAvg ? ((currentValue - dayAvg) / dayAvg) * 100 : 0,
+      hourComparison: currentValue > hourAvg ? ((currentValue - hourAvg) / hourAvg) * 100 : 0,
+      isPeakDay: stats.peakDays.includes(day),
+      isPeakHour: stats.peakHours.includes(hour),
+    }
   }
 
   // Get value for specific day and hour

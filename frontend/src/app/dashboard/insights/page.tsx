@@ -6,7 +6,6 @@ import { Card } from '@/components/ui/card'
 import { TrendingUp, FileText, Settings2 } from 'lucide-react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { DateRangeSelector } from '@/components/insights/date-range-selector'
-import { HeatmapChart } from '@/components/insights/heatmap-chart'
 import { PeriodComparisonComponent } from '@/components/insights/period-comparison'
 import { TimelineChart } from '@/components/insights/timeline-chart'
 import { AutoInsightsComponent } from '@/components/insights/auto-insights'
@@ -185,32 +184,6 @@ export default function InsightsPage() {
                 onGranularityChange={setTimelineGranularity}
                 loading={timelineLoading}
               />
-            </Card>
-
-            {/* Heatmap */}
-            <Card className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <div>
-                  <h2 className="text-xl font-semibold">Mapa de Calor</h2>
-                  <p className="text-sm text-muted-foreground">
-                    Identifique padrões de vendas por dia da semana e horário
-                  </p>
-                </div>
-                <Select
-                  value={heatmapMetric}
-                  onValueChange={(value) => setHeatmapMetric(value as typeof heatmapMetric)}
-                >
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Selecione a métrica" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="revenue">Faturamento</SelectItem>
-                    <SelectItem value="orders">Pedidos</SelectItem>
-                    <SelectItem value="averageTicket">Ticket Médio</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <HeatmapChart data={heatmapData} metric={heatmapMetric} loading={heatmapLoading} />
             </Card>
           </div>
         </TabsContent>

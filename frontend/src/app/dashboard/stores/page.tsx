@@ -7,8 +7,8 @@ import { useQueryClient } from '@tanstack/react-query'
 import { queryKeys } from '@/lib/api'
 import { StoreMetricsCards } from '@/components/dashboard/store-metrics-cards'
 import { StoreComparisonTable } from '@/components/dashboard/store-comparison-table'
-import { StoreRevenueChart } from '@/components/charts/store-revenue-chart'
-import { StoreDistributionChart } from '@/components/charts/store-distribution-chart'
+import { StoreRankingChart } from '@/components/charts/store-ranking-chart'
+import { StoreMetricsComparisonChart } from '@/components/charts/store-metrics-comparison-chart'
 import { StoresDashboardSkeleton } from '@/components/ui/skeletons'
 import { DashboardFilters } from '@/components/dashboard/filters'
 import { Button } from '@/components/ui/button'
@@ -193,9 +193,13 @@ export default function StoresPage() {
 
       <StoreMetricsCards data={storeData} isLoading={isLoading} />
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <StoreRevenueChart data={storeData} isLoading={isLoading} />
-        <StoreDistributionChart data={storeData} isLoading={isLoading} />
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className="w-full">
+          <StoreRankingChart data={storeData} isLoading={isLoading} />
+        </div>
+        <div className="w-full">
+          <StoreMetricsComparisonChart data={storeData} isLoading={isLoading} />
+        </div>
       </div>
 
       <div className="space-y-4">

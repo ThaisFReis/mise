@@ -14,6 +14,13 @@ export function formatCurrency(value: number, currency = 'BRL'): string {
   }).format(value)
 }
 
+export function formatCompactCurrency(value: number): string {
+  return new Intl.NumberFormat('pt-BR', {
+    notation: 'compact',
+    compactDisplay: 'short',
+  }).format(value)
+}
+
 // Format numbers with locale
 export function formatNumber(value: number, options?: Intl.NumberFormatOptions): string {
   return new Intl.NumberFormat('pt-BR', {
