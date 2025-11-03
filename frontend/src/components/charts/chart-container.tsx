@@ -2,10 +2,12 @@
 
 import { ReactNode } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 
 interface ChartContainerProps {
   title: string
+  description?: string
+  footer?: ReactNode
   loading?: boolean
   error?: string
   className?: string
@@ -14,17 +16,22 @@ interface ChartContainerProps {
 
 export function ChartContainer({
   title,
+  description,
+  footer,
   loading,
   error,
   className = '',
   children
 }: ChartContainerProps) {
   return (
-    <Card className={`${className} overflow-hidden`}>
-      <CardHeader className="pb-4">
+    <Card className={`${className} flex flex-col`}>
+      <CardHeader className={description ? "items-center pb-0" : "pb-4"}>
         <CardTitle className="text-lg font-semibold text-foreground">{title}</CardTitle>
+        {description && (
+          <CardDescription>{description}</CardDescription>
+        )}
       </CardHeader>
-      <CardContent className="pb-6">
+      <CardContent className={footer ? "flex-1 pb-0" : "pb-6"}>
         {loading ? (
           <Skeleton className="h-[300px] w-full rounded-lg" />
         ) : error ? (
@@ -37,6 +44,11 @@ export function ChartContainer({
           </div>
         )}
       </CardContent>
+      {footer && (
+        <CardFooter className="flex-col gap-2 text-sm">
+          {footer}
+        </CardFooter>
+      )}
     </Card>
   )
 }

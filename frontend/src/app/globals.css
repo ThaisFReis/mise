@@ -29,6 +29,11 @@
     --chart-3: oklch(0.8176 0.1492 80.5860);
     --chart-4: oklch(0.6560 0.1363 306.0262);
     --chart-5: oklch(0.6481 0.1903 352.7635);
+    --chart-6: oklch(0.7200 0.1350 160.0000);
+    --chart-7: oklch(0.6800 0.1280 270.0000);
+    --chart-8: oklch(0.7500 0.1400 45.0000);
+    --chart-9: oklch(0.6650 0.1450 330.0000);
+    --chart-10: oklch(0.7100 0.1200 200.0000);
     --sidebar: oklch(0.9846 0.0007 247.8273);
     --sidebar-foreground: oklch(0.2687 0.0036 247.9614);
     --sidebar-primary: oklch(0.5052 0.0757 182.8007);
@@ -87,6 +92,11 @@
     --chart-3: oklch(0.8380 0.1371 82.1273);
     --chart-4: oklch(0.7050 0.1160 306.5832);
     --chart-5: oklch(0.6842 0.1688 351.2746);
+    --chart-6: oklch(0.7800 0.1420 160.0000);
+    --chart-7: oklch(0.7400 0.1350 270.0000);
+    --chart-8: oklch(0.8100 0.1500 45.0000);
+    --chart-9: oklch(0.7250 0.1550 330.0000);
+    --chart-10: oklch(0.7700 0.1300 200.0000);
     --sidebar: oklch(0.1810 0.0019 247.9288);
     --sidebar-foreground: oklch(0.9613 0.0022 247.8448);
     --sidebar-primary: oklch(0.5639 0.0854 182.7029);
@@ -143,6 +153,11 @@
     --color-chart-3: var(--chart-3);
     --color-chart-4: var(--chart-4);
     --color-chart-5: var(--chart-5);
+    --color-chart-6: var(--chart-6);
+    --color-chart-7: var(--chart-7);
+    --color-chart-8: var(--chart-8);
+    --color-chart-9: var(--chart-9);
+    --color-chart-10: var(--chart-10);
     --color-sidebar: var(--sidebar);
     --color-sidebar-foreground: var(--sidebar-foreground);
     --color-sidebar-primary: var(--sidebar-primary);
@@ -237,7 +252,7 @@
 
 /* Custom utilities for analytics dashboard */
 .metric-card {
-  @apply bg-card text-card-foreground rounded-2xl p-6 shadow-gray-soft transition duration-500 hover:scale-105;
+  @apply bg-card text-card-foreground rounded-2xl p-6 shadow-gray-soft;
 }
 
 .chart-container {

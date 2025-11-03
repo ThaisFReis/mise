@@ -417,3 +417,53 @@ export function useCustomReport(
     ...options,
   })
 }
+
+// Financial Analysis hooks
+export interface CostFilters {
+  productId?: string
+  supplierId?: string
+  startDate?: string
+  endDate?: string
+}
+
+export interface SupplierFilters {
+  search?: string
+  isActive?: boolean
+}
+
+// Financial hooks removed - features deprecated
+// export function useCosts(
+//   filters?: CostFilters,
+//   options?: Omit<UseQueryOptions<ProductCost[]>, 'queryKey' | 'queryFn'>
+// ) {
+//   return useQuery({
+//     queryKey: queryKeys.financial.costs(filters),
+//     queryFn: () => api.getCosts(filters),
+//     staleTime: 5 * 60 * 1000, // 5 minutes
+//     ...options,
+//   })
+// }
+
+// export function useCostHistory(
+//   productId?: string,
+//   options?: Omit<UseQueryOptions<CostHistory[]>, 'queryKey' | 'queryFn'>
+// ) {
+//   return useQuery({
+//     queryKey: queryKeys.financial.costHistory(productId),
+//     queryFn: () => api.getCostHistory(productId),
+//     staleTime: 5 * 60 * 1000, // 5 minutes
+//     ...options,
+//   })
+// }
+
+// export function useSuppliers(
+//   filters?: SupplierFilters,
+//   options?: Omit<UseQueryOptions<Supplier[]>, 'queryKey' | 'queryFn'>
+// ) {
+//   return useQuery({
+//     queryKey: queryKeys.financial.suppliers(filters),
+//     queryFn: () => api.getSuppliers(filters),
+//     staleTime: 5 * 60 * 1000, // 5 minutes
+//     ...options,
+//   })
+// }

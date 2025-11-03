@@ -109,7 +109,7 @@ export class StoreService {
         c.name as category,
         SUM(ps.quantity) as quantity,
         SUM(ps.total_price) as revenue,
-        AVG(ps.unit_price) as "averagePrice"
+        AVG(ps.total_price / NULLIF(ps.quantity, 0)) as "averagePrice"
       FROM stores st
       JOIN sales s ON s.store_id = st.id
         AND s.created_at >= ${start}

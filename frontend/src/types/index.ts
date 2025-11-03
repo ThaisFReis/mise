@@ -525,3 +525,4 @@ export interface SavedReport {
   createdAt: string
   lastUsed?: string
 }
+

@@ -46,6 +46,11 @@ export class StoreController {
 
       res.json(comparison);
     } catch (error) {
+      console.error('Error in getStoreComparison:', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+        query: { startDate: req.query.startDate, endDate: req.query.endDate },
+      });
       next(error);
     }
   }

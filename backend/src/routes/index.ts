@@ -7,6 +7,8 @@ import categoryRoutes from './categories';
 import insightsRoutes from './insights';
 import reportsRoutes from './reports';
 import customReportsRoutes from './customReports';
+import queryBuilderRoutes from './queryBuilder';
+import savedDashboardsRoutes from './dashboards';
 
 const router = Router();
 
@@ -18,6 +20,10 @@ router.use('/categories', categoryRoutes);
 router.use('/insights', insightsRoutes);
 router.use('/reports', reportsRoutes);
 router.use('/custom-reports', customReportsRoutes);
+
+// Custom Dashboards: Query Builder routes
+router.use('/query-builder', queryBuilderRoutes);
+router.use('/dashboards', savedDashboardsRoutes);
 
 // Health check
 router.get('/health', (req, res) => {
