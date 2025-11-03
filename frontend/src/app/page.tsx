@@ -15,7 +15,14 @@ import {
   Target,
   Zap,
   HelpCircle,
-  ArrowRight
+  ArrowRight,
+  ReceiptText,
+  PieChart,
+  Users,
+  CirclePercent,
+  CalendarCheck,
+  ShoppingCart,
+  ChevronDown
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -99,7 +106,7 @@ export default function HomePage() {
       href: '/dashboard/query-builder',
       gradient: 'bg-gradient-to-br from-purple-500 to-purple-600',
       features: [
-        'Arraste e solte métricas e dimensões',
+        'Escolha métricas e dimensões',
         'Múltiplos tipos de gráficos',
         'Filtros de data e período',
         'Exporte para CSV ou PNG'
@@ -180,34 +187,98 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-background border-b border-border">
-        <div className="container mx-auto px-6 py-16 max-w-7xl">
-          <div className="text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-              <Sparkles className="w-4 h-4" />
-              Plataforma de Analytics para Restaurantes
+      <div className="bg-gradient-to-br from-background via-primary/5 to-background min-h-screen flex items-center relative overflow-hidden">
+        {/* Floating Analytics Icons */}
+        <div className="absolute inset-0 pointer-events-none hidden md:block">
+          {/* Restaurant - Top Left */}
+          <div className="absolute top-20 left-10 opacity-20 animate-float">
+            <ReceiptText className="w-12 h-12 text-primary" />
+          </div>
+
+          {/* Analytics Chart - Top Right */}
+          <div className="absolute top-32 right-20 opacity-25 animate-float-delayed">
+            <PieChart className="w-10 h-10 text-primary" />
+          </div>
+
+          {/* Customers - Middle Left */}
+          <div className="absolute top-1/2 left-20 opacity-20 animate-float-slow">
+            <Users className="w-11 h-11 text-primary" />
+          </div>
+
+          {/* Revenue - Middle Right */}
+          <div className="absolute top-1/3 right-32 opacity-30 animate-float">
+            <CirclePercent className="w-14 h-14 text-primary" />
+          </div>
+
+          {/* Reservations - Bottom Left */}
+          <div className="absolute bottom-32 left-32 opacity-25 animate-float-delayed">
+            <CalendarCheck className="w-12 h-12 text-primary" />
+          </div>
+
+          {/* Orders - Bottom Right */}
+          <div className="absolute bottom-40 right-16 opacity-20 animate-float-slow">
+            <ShoppingCart className="w-10 h-10 text-primary" />
+          </div>
+        </div>
+
+        <div className="container mx-auto px-6 py-24 max-w-7xl relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            {/* Left Column - Text Content */}
+            <div className="text-center lg:text-left">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-8">
+                <Sparkles className="w-4 h-4" />
+                Plataforma de Analytics para Restaurantes
+              </div>
+
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-8 leading-tight">
+                Bem-vindo ao <span className="text-primary italic">Mise</span>
+              </h1>
+
+              <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground mb-12 leading-relaxed">
+                Transforme dados do seu restaurante em decisões inteligentes.
+                Analytics poderoso, sem complexidade.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center">
+                <Button
+                  size="lg"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-12 py-6 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                  onClick={() => window.location.href = '/dashboard'}
+                >
+                  Começar Agora
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="px-12 py-6 text-lg font-semibold rounded-xl border-2 hover:bg-primary/5 transition-all duration-300"
+                  onClick={() => window.location.href = '/dashboard/query-builder'}
+                >
+                  Explorar Funcionalidades
+                </Button>
+              </div>
             </div>
 
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
-              Bem-vindo ao <span className="text-primary">Mise</span>
-            </h1>
+            {/* Right Column - Dashboard Preview */}
+            <div className="relative">
+              <div className="relative bg-card rounded-2xl shadow-gray-soft border border-border overflow-hidden transform hover:scale-105 transition-transform duration-300">
+                <img
+                  src="/images/dashboard-preview.png"
+                  alt="Dashboard Preview"
+                  className="w-full h-auto object-cover"
+                />
+              </div>
+              {/* Floating elements for visual interest */}
+              <div className="absolute -top-4 -right-4 w-20 h-20 bg-primary/20 rounded-full blur-xl"></div>
+              <div className="absolute -bottom-6 -left-6 w-16 h-16 bg-primary/30 rounded-full blur-lg"></div>
+            </div>
+          </div>
 
-            <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed">
-              Transforme dados do seu restaurante em decisões inteligentes.
-              Analytics poderoso, sem complexidade.
-            </p>
-
-            {/* Quick Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-              {quickStats.map((stat, index) => (
-                <div key={index} className="flex flex-col items-center gap-2 p-4">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-2">
-                    <stat.icon className="w-6 h-6 text-primary" />
-                  </div>
-                  <h3 className="font-semibold text-foreground">{stat.label}</h3>
-                  <p className="text-sm text-muted-foreground">{stat.description}</p>
-                </div>
-              ))}
+          {/* Scroll Indicator */}
+          <div className="absolute -bottom-5 left-1/2 lex flex-col items-center gap-2">
+            <div className="animate-bounce-vertical">
+              <ChevronDown className="w-6 h-6 text-primary" />
             </div>
           </div>
         </div>
@@ -228,65 +299,6 @@ export default function HomePage() {
           {features.map((feature, index) => (
             <FeatureCard key={index} {...feature} />
           ))}
-        </div>
-      </div>
-
-      {/* Getting Started Section */}
-      <div className="bg-gradient-to-br from-primary/5 to-background border-t border-border">
-        <div className="container mx-auto px-6 py-16 max-w-4xl">
-          <Card className="p-8 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 shadow-lg">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
-                Como Começar
-              </h2>
-              <p className="text-muted-foreground">
-                Siga estes passos para aproveitar ao máximo a plataforma
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="flex flex-col items-center text-center p-4 bg-card rounded-xl">
-                <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xl font-bold mb-4">
-                  1
-                </div>
-                <h3 className="font-semibold text-foreground mb-2">Explore o Dashboard</h3>
-                <p className="text-sm text-muted-foreground">
-                  Comece com a visão geral para entender suas métricas principais
-                </p>
-              </div>
-
-              <div className="flex flex-col items-center text-center p-4 bg-card rounded-xl">
-                <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xl font-bold mb-4">
-                  2
-                </div>
-                <h3 className="font-semibold text-foreground mb-2">Analise Detalhes</h3>
-                <p className="text-sm text-muted-foreground">
-                  Use as páginas específicas para investigar produtos, canais e lojas
-                </p>
-              </div>
-
-              <div className="flex flex-col items-center text-center p-4 bg-card rounded-xl">
-                <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xl font-bold mb-4">
-                  3
-                </div>
-                <h3 className="font-semibold text-foreground mb-2">Crie Análises Customizadas</h3>
-                <p className="text-sm text-muted-foreground">
-                  Use o Query Builder para criar suas próprias análises sem código
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-8 text-center">
-              <Button
-                size="lg"
-                className="bg-primary hover:bg-primary/90 text-primary-foreground px-8"
-                onClick={() => window.location.href = '/dashboard'}
-              >
-                Começar Agora
-                <ChevronRight className="w-5 h-5 ml-2" />
-              </Button>
-            </div>
-          </Card>
         </div>
       </div>
 

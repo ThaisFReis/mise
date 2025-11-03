@@ -43,7 +43,7 @@ export default function FAQPage() {
         },
         {
           question: 'Preciso de conhecimento técnico para usar a plataforma?',
-          answer: 'Não! O Mise foi projetado para ser intuitivo e fácil de usar. Todas as análises podem ser criadas através de interfaces visuais (arrastar e soltar), sem necessidade de escrever código ou conhecer SQL. O Query Builder permite criar análises complexas de forma simples e visual.'
+          answer: 'Não! O Mise foi projetado para ser intuitivo e fácil de usar. Todas as análises podem ser criadas através de interfaces visuais, sem necessidade de escrever código ou conhecer SQL. O Query Builder permite criar análises complexas de forma simples e visual.'
         },
         {
           question: 'Como navego entre as diferentes seções?',

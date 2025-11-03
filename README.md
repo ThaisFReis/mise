@@ -46,7 +46,7 @@
 ### Funcionalidades Recentes (Fase 1 - Concluída)
 - 🎯 **Dashboard Templates**: Sistema de templates pré-configurados para análises rápidas (vendas, produtos, canais, lojas)
 - 📊 **Catálogo de Métricas**: Biblioteca com 15+ métricas prontas para uso em dashboards customizados
-- 🔍 **Query Builder**: Construtor visual de consultas com sistema de tradução PT-BR - crie análises customizadas arrastando métricas e dimensões
+- 🔍 **Query Builder**: Construtor visual de consultas com sistema de tradução PT-BR - crie análises customizadas escolhendo métricas e dimensões
 - 💰 **Análise Financeira Completa**: Módulo de custos, despesas operacionais, fornecedores e análise de rentabilidade por canal
 - 📊 **Break-even Analysis**: Análise de ponto de equilíbrio e margens de contribuição
 - 🎯 **KPI Cards Dinâmicos**: Cartões de métricas principais configuráveis no Query Builder

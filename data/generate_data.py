@@ -4,6 +4,7 @@ God Level Coder Challenge - Data Generator
 Generates realistic restaurant data based on Arcca's actual models
 """
 
+import os
 import random
 import argparse
 from datetime import datetime, timedelta
@@ -11,6 +12,10 @@ from decimal import Decimal
 import psycopg2
 from psycopg2.extras import execute_batch
 from faker import Faker
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 fake = Faker('pt_BR')
 
@@ -306,21 +311,33 @@ def generate_customers(conn, num_customers=10000):
     return customer_ids
 
 
+def get_payment_types_cache(cursor):
+    """Cache payment types to avoid repeated queries"""
+    cursor.execute("SELECT id, description FROM payment_types")
+    return {row[1]: row[0] for row in cursor.fetchall()}
+
+
 def generate_sales(conn, stores, channels, products, items, option_groups, customers, months=6):
     """Generate sales with realistic patterns"""
     print(f"Generating sales for {months} months...")
-    
+
     cursor = conn.cursor()
+
+    # Cache payment types
+    payment_types_cache = get_payment_types_cache(cursor)
+
     start_date = datetime.now() - timedelta(days=30 * months)
     end_date = datetime.now()
-    
+
     # Anomalies
     anomaly_week = start_date + timedelta(days=random.randint(30, 60))
     promo_day = start_date + timedelta(days=random.randint(90, 120))
-    
+
     current_date = start_date
     total_sales = 0
     batch_size = 500
+    start_time = datetime.now()
+    total_days = (end_date - start_date).days
     
     while current_date <= end_date:
         weekday = current_date.weekday()
@@ -361,23 +378,34 @@ def generate_sales(conn, stores, channels, products, items, option_groups, custo
             )
             
             sales_batch.append(sale_data)
-            
+
             if len(sales_batch) >= batch_size:
-                insert_sales_batch(cursor, sales_batch, items, option_groups)
+                insert_sales_batch(cursor, sales_batch, payment_types_cache)
                 total_sales += len(sales_batch)
                 sales_batch = []
                 conn.commit()
-        
+
         # Insert remaining
         if sales_batch:
-            insert_sales_batch(cursor, sales_batch, items, option_groups)
+            insert_sales_batch(cursor, sales_batch, payment_types_cache)
             total_sales += len(sales_batch)
             conn.commit()
-        
+
         current_date += timedelta(days=1)
-        
-        if current_date.day == 1:
-            print(f"  → {current_date.strftime('%B %Y')}: {total_sales:,} sales")
+
+        # Progress reporting
+        days_processed = (current_date - start_date).days
+        if current_date.day == 1 or days_processed % 7 == 0:
+            elapsed_time = (datetime.now() - start_time).total_seconds()
+            if elapsed_time > 0:
+                sales_per_sec = total_sales / elapsed_time
+                days_remaining = total_days - days_processed
+                estimated_remaining_sec = (days_remaining / days_processed) * elapsed_time if days_processed > 0 else 0
+                estimated_remaining_min = estimated_remaining_sec / 60
+
+                print(f"  → {current_date.strftime('%Y-%m-%d')}: {total_sales:,} sales | "
+                      f"{sales_per_sec:.0f} sales/s | "
+                      f"ETA: {estimated_remaining_min:.1f} min")
     
     print(f"✓ {total_sales:,} total sales generated")
     return total_sales
@@ -530,9 +558,9 @@ def generate_single_sale(sale_time, store_id, channel, customer_id, products, it
     }
 
 
-def insert_sales_batch(cursor, sales_batch, items, option_groups):
-    """Insert batch of sales with all related data"""
-    
+def insert_sales_batch(cursor, sales_batch, payment_types_cache):
+    """Insert batch of sales with all related data using optimized batch inserts"""
+
     # Insert sales
     sales_data = [(
         s['store_id'], s['customer_id'], s['channel_id'],
@@ -547,7 +575,7 @@ def insert_sales_batch(cursor, sales_batch, items, option_groups):
         s['production_sec'], s['delivery_sec'],
         s['discount_reason'], s['people_qty'], 'POS'
     ) for s in sales_batch]
-    
+
     execute_batch(cursor, """
         INSERT INTO sales (
             store_id, customer_id, channel_id, customer_name,
@@ -558,87 +586,144 @@ def insert_sales_batch(cursor, sales_batch, items, option_groups):
             discount_reason, people_quantity, origin
         ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
     """, sales_data, page_size=500)
-    
+
     # Get inserted sale IDs
     cursor.execute("""
-        SELECT id FROM sales 
-        ORDER BY id DESC 
+        SELECT id FROM sales
+        ORDER BY id DESC
         LIMIT %s
     """, (len(sales_batch),))
     sale_ids = [row[0] for row in cursor.fetchall()]
     sale_ids.reverse()
-    
-    # Insert product_sales and related data
+
+    # Prepare batch data for product_sales
+    product_sales_data = []
+    product_sales_mapping = []  # To track which sale and product each product_sale belongs to
+
     for sale_id, sale in zip(sale_ids, sales_batch):
-        for prod_data in sale['products']:
-            cursor.execute("""
-                INSERT INTO product_sales (
-                    sale_id, product_id, quantity, base_price, total_price
-                ) VALUES (%s,%s,%s,%s,%s) RETURNING id
-            """, (
+        for prod_idx, prod_data in enumerate(sale['products']):
+            product_sales_data.append((
                 sale_id, prod_data['product_id'],
                 prod_data['quantity'], prod_data['base_price'],
                 prod_data['total_price']
             ))
-            product_sale_id = cursor.fetchone()[0]
-            
-            # Insert items for this product
-            for item_data in prod_data['items']:
-                cursor.execute("""
-                    INSERT INTO item_product_sales (
-                        product_sale_id, item_id, option_group_id,
-                        quantity, additional_price, price, amount
-                    ) VALUES (%s,%s,%s,%s,%s,%s,%s)
-                """, (
+            product_sales_mapping.append({
+                'sale_id': sale_id,
+                'prod_idx': prod_idx,
+                'items': prod_data['items']
+            })
+
+    # Insert product_sales in batch
+    if product_sales_data:
+        execute_batch(cursor, """
+            INSERT INTO product_sales (
+                sale_id, product_id, quantity, base_price, total_price
+            ) VALUES (%s,%s,%s,%s,%s)
+        """, product_sales_data, page_size=1000)
+
+        # Get inserted product_sale IDs
+        cursor.execute("""
+            SELECT id FROM product_sales
+            ORDER BY id DESC
+            LIMIT %s
+        """, (len(product_sales_data),))
+        product_sale_ids = [row[0] for row in cursor.fetchall()]
+        product_sale_ids.reverse()
+
+        # Prepare batch data for item_product_sales
+        item_product_sales_data = []
+        for product_sale_id, mapping in zip(product_sale_ids, product_sales_mapping):
+            for item_data in mapping['items']:
+                item_product_sales_data.append((
                     product_sale_id, item_data['item_id'],
                     item_data['option_group_id'],
                     item_data['quantity'], item_data['additional_price'],
                     item_data['price'], 1
                 ))
-        
-        # Insert delivery data
+
+        # Insert item_product_sales in batch
+        if item_product_sales_data:
+            execute_batch(cursor, """
+                INSERT INTO item_product_sales (
+                    product_sale_id, item_id, option_group_id,
+                    quantity, additional_price, price, amount
+                ) VALUES (%s,%s,%s,%s,%s,%s,%s)
+            """, item_product_sales_data, page_size=1000)
+
+    # Prepare batch data for delivery_sales and delivery_addresses
+    delivery_sales_data = []
+    delivery_addresses_data = []
+    delivery_sale_mapping = []  # To track sale_id for each delivery
+
+    for sale_id, sale in zip(sale_ids, sales_batch):
         if sale['delivery']:
             d = sale['delivery']
-            cursor.execute("""
-                INSERT INTO delivery_sales (
-                    sale_id, courier_name, courier_phone, courier_type,
-                    delivery_type, status, delivery_fee, courier_fee
-                ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s) RETURNING id
-            """, (
+            delivery_sales_data.append((
                 sale_id, d['courier_name'], d['courier_phone'],
                 d['courier_type'], d['delivery_type'], d['status'],
                 d['delivery_fee'], d['courier_fee']
             ))
-            delivery_sale_id = cursor.fetchone()[0]
-            
-            addr = d['address']
+            delivery_sale_mapping.append({
+                'sale_id': sale_id,
+                'address': d['address']
+            })
+
+    # Insert delivery_sales in batch
+    if delivery_sales_data:
+        execute_batch(cursor, """
+            INSERT INTO delivery_sales (
+                sale_id, courier_name, courier_phone, courier_type,
+                delivery_type, status, delivery_fee, courier_fee
+            ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
+        """, delivery_sales_data, page_size=1000)
+
+        # Get inserted delivery_sale IDs
+        cursor.execute("""
+            SELECT id FROM delivery_sales
+            ORDER BY id DESC
+            LIMIT %s
+        """, (len(delivery_sales_data),))
+        delivery_sale_ids = [row[0] for row in cursor.fetchall()]
+        delivery_sale_ids.reverse()
+
+        # Prepare delivery addresses
+        for delivery_sale_id, mapping in zip(delivery_sale_ids, delivery_sale_mapping):
+            addr = mapping['address']
             # Ensure coordinates are within valid range for Brazil
             lat = max(-33.0, min(-5.0, addr['latitude']))
             long = max(-74.0, min(-34.0, addr['longitude']))
-            
-            cursor.execute("""
+
+            delivery_addresses_data.append((
+                mapping['sale_id'], delivery_sale_id, addr['street'], addr['number'],
+                addr['complement'], addr['neighborhood'], addr['city'],
+                addr['state'], addr['postal_code'], lat, long
+            ))
+
+        # Insert delivery_addresses in batch
+        if delivery_addresses_data:
+            execute_batch(cursor, """
                 INSERT INTO delivery_addresses (
                     sale_id, delivery_sale_id, street, number, complement,
                     neighborhood, city, state, postal_code, latitude, longitude
                 ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
-            """, (
-                sale_id, delivery_sale_id, addr['street'], addr['number'],
-                addr['complement'], addr['neighborhood'], addr['city'],
-                addr['state'], addr['postal_code'], lat, long
-            ))
-        
-        # Insert payments
+            """, delivery_addresses_data, page_size=1000)
+
+    # Prepare batch data for payments
+    payments_data = []
+    for sale_id, sale in zip(sale_ids, sales_batch):
         for payment in sale['payments']:
-            cursor.execute(
-                "SELECT id FROM payment_types WHERE description = %s LIMIT 1",
-                (payment['type'],)
-            )
-            result = cursor.fetchone()
-            if result:
-                cursor.execute("""
-                    INSERT INTO payments (sale_id, payment_type_id, value)
-                    VALUES (%s,%s,%s)
-                """, (sale_id, result[0], Decimal(str(payment['value']))))
+            payment_type_id = payment_types_cache.get(payment['type'])
+            if payment_type_id:
+                payments_data.append((
+                    sale_id, payment_type_id, Decimal(str(payment['value']))
+                ))
+
+    # Insert payments in batch
+    if payments_data:
+        execute_batch(cursor, """
+            INSERT INTO payments (sale_id, payment_type_id, value)
+            VALUES (%s,%s,%s)
+        """, payments_data, page_size=1000)
 
 
 def create_indexes(conn):
@@ -664,15 +749,38 @@ def create_indexes(conn):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Generate God Level Challenge data')
-    parser.add_argument('--db-url', default='postgresql://challenge:challenge@localhost:5432/challenge_db',
-                       help='PostgreSQL connection URL')
-    parser.add_argument('--stores', type=int, default=50, help='Number of stores')
-    parser.add_argument('--products', type=int, default=500, help='Number of products')
-    parser.add_argument('--items', type=int, default=200, help='Number of items/complements')
-    parser.add_argument('--customers', type=int, default=10000, help='Number of customers')
-    parser.add_argument('--months', type=int, default=6, help='Months of sales data')
-    
+    # Get defaults from environment variables
+    default_db_url = os.getenv('DATABASE_URL', 'postgresql://challenge:challenge@localhost:5432/challenge_db')
+    default_stores = int(os.getenv('STORES', 50))
+    default_products = int(os.getenv('PRODUCTS', 500))
+    default_items = int(os.getenv('ITEMS', 200))
+    default_customers = int(os.getenv('CUSTOMERS', 10000))
+    default_months = int(os.getenv('MONTHS', 6))
+
+    parser = argparse.ArgumentParser(
+        description='Generate God Level Challenge data',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Environment Variables:
+  DATABASE_URL  PostgreSQL connection URL
+  STORES        Number of stores (default: 50)
+  PRODUCTS      Number of products (default: 500)
+  ITEMS         Number of items/complements (default: 200)
+  CUSTOMERS     Number of customers (default: 10000)
+  MONTHS        Months of sales data (default: 6)
+
+Create a .env file to avoid passing arguments every time.
+See .env.example for template.
+        """
+    )
+    parser.add_argument('--db-url', default=default_db_url,
+                       help=f'PostgreSQL connection URL (default: from .env or localhost)')
+    parser.add_argument('--stores', type=int, default=default_stores, help=f'Number of stores (default: {default_stores})')
+    parser.add_argument('--products', type=int, default=default_products, help=f'Number of products (default: {default_products})')
+    parser.add_argument('--items', type=int, default=default_items, help=f'Number of items/complements (default: {default_items})')
+    parser.add_argument('--customers', type=int, default=default_customers, help=f'Number of customers (default: {default_customers})')
+    parser.add_argument('--months', type=int, default=default_months, help=f'Months of sales data (default: {default_months})')
+
     args = parser.parse_args()
     
     print("=" * 70)
