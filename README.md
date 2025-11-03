@@ -2,20 +2,22 @@
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.6%2F5.7-blue)
-![Next.js](https://img.shields.io/badge/Next.js-15.0-black)
+![Next.js](https://img.shields.io/badge/Next.js-15.0.3-black)
 ![Node.js](https://img.shields.io/badge/Node.js-20.x-green)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791)
 ![Redis](https://img.shields.io/badge/Redis-7-DC382D)
-![Prisma](https://img.shields.io/badge/Prisma-6.16-2D3748)
+![Prisma](https://img.shields.io/badge/Prisma-6.16.2-2D3748)
 ![API Endpoints](https://img.shields.io/badge/API_Endpoints-40+-00AA00)
 ![Components](https://img.shields.io/badge/Components-66+-purple)
 ![Services](https://img.shields.io/badge/Services-18-orange)
 
 **Mise** é uma plataforma completa de análise de dados para restaurantes, oferecendo insights detalhados sobre vendas, produtos, canais e performance operacional. Desenvolvida com tecnologias modernas e foco em performance e experiência do usuário.
 
-> **Status Atual**: Fase 1 concluída com módulo financeiro completo e Query Builder customizável
+> **Status Atual**: Fase 1 concluída - Sistema completo de dashboards customizáveis com Query Builder e módulo financeiro
 >
-> **Branch Ativa**: `feature/custom-dashboards` - Implementação do sistema de dashboards personalizáveis com Query Builder
+> **Branch Ativa**: `feature/custom-dashboards`
+>
+> **Últimas Atualizações**: Implementação de dashboards personalizáveis com templates e catálogo de métricas
 
 ---
 
@@ -41,7 +43,9 @@
 
 ## 🚀 Novidades
 
-### Funcionalidades Recentes (Fase 1)
+### Funcionalidades Recentes (Fase 1 - Concluída)
+- 🎯 **Dashboard Templates**: Sistema de templates pré-configurados para análises rápidas (vendas, produtos, canais, lojas)
+- 📊 **Catálogo de Métricas**: Biblioteca com 15+ métricas prontas para uso em dashboards customizados
 - 🔍 **Query Builder**: Construtor visual de consultas com sistema de tradução PT-BR - crie análises customizadas arrastando métricas e dimensões
 - 💰 **Análise Financeira Completa**: Módulo de custos, despesas operacionais, fornecedores e análise de rentabilidade por canal
 - 📊 **Break-even Analysis**: Análise de ponto de equilíbrio e margens de contribuição
@@ -107,10 +111,12 @@ Visualize padrões de vendas através de heatmaps e análises temporais avançad
 - **Insights automáticos**: Identifique automaticamente tendências, picos e anomalias
 - **Padrões de comportamento**: Descubra horários de pico e sazonalidades
 
-### 🔍 Query Builder (Novo!)
+### 🔍 Query Builder & Dashboards Customizados
+- **Templates Pré-configurados**: Dashboards prontos para vendas, produtos, canais e lojas
+- **Catálogo de Métricas**: 15+ métricas documentadas e prontas para uso
 - **Construtor Visual**: Interface drag-and-drop para criar análises personalizadas
 - **Sistema de Tradução**: Todos os campos técnicos do banco traduzidos para PT-BR
-- **Métricas Dinâmicas**: Selecione entre 15+ métricas (receita, pedidos, ticket médio, margens, etc.)
+- **Métricas Dinâmicas**: Selecione entre receita, pedidos, ticket médio, margens, custos, lucro, etc.
 - **Dimensões Configuráveis**: Agrupe por produto, canal, loja, categoria, dia da semana, hora, etc.
 - **Múltiplas Visualizações**:
   - Tabelas interativas com ordenação
@@ -159,36 +165,37 @@ Visualize padrões de vendas através de heatmaps e análises temporais avançad
 
 ### Backend
 - **[Node.js 20](https://nodejs.org/)** - Runtime JavaScript
-- **[TypeScript 5.7](https://www.typescriptlang.org/)** - Tipagem estática
-- **[Express 4.21](https://expressjs.com/)** - Framework web minimalista
-- **[Prisma 6.16](https://www.prisma.io/)** - ORM moderno
+- **[TypeScript 5.7.3](https://www.typescriptlang.org/)** - Tipagem estática
+- **[Express 4.21.2](https://expressjs.com/)** - Framework web minimalista
+- **[Prisma 6.16.2](https://www.prisma.io/)** - ORM moderno
 - **[PostgreSQL 15](https://www.postgresql.org/)** - Banco de dados relacional
 - **[Redis 7](https://redis.io/)** - Cache em memória
-- **[ioredis 5.8](https://github.com/redis/ioredis)** - Cliente Redis robusto para Node.js
-- **[Zod 3.23](https://zod.dev/)** - Validação de schemas
+- **[ioredis 5.8.2](https://github.com/redis/ioredis)** - Cliente Redis robusto para Node.js
+- **[Zod 3.23.8](https://zod.dev/)** - Validação de schemas
+- **[date-fns 4.1.0](https://date-fns.org/)** - Manipulação de datas
 - **[Docker](https://www.docker.com/)** - Containerização
 
 ### Frontend
-- **[Next.js 15.0](https://nextjs.org/)** - Framework React com App Router e Turbo mode
-- **[React 18.3](https://react.dev/)** - Biblioteca UI
-- **[TypeScript 5.6](https://www.typescriptlang.org/)** - Tipagem estática
-- **[Tailwind CSS 3.4](https://tailwindcss.com/)** - Framework CSS utility-first
-- **[shadcn/ui](https://ui.shadcn.com/)** - Componentes UI reutilizáveis
-- **[Recharts 2.15](https://recharts.org/)** - Biblioteca de gráficos
-- **[TanStack Query 5.59](https://tanstack.com/query)** - Gerenciamento de estado server (React Query)
-- **[TanStack Table 8.20](https://tanstack.com/table)** - Tabelas poderosas e flexíveis
-- **[Zustand 5.0](https://zustand-demo.pmnd.rs/)** - State management
-- **[React Hook Form 7.66](https://react-hook-form.com/)** - Formulários performáticos
-- **[Zod 3.25](https://zod.dev/)** - Validação de schemas
-- **[date-fns 4.1](https://date-fns.org/)** - Manipulação de datas
-- **[Lucide React](https://lucide.dev/)** - Ícones modernos
+- **[Next.js 15.0.3](https://nextjs.org/)** - Framework React com App Router e Turbo mode
+- **[React 18.3.1](https://react.dev/)** - Biblioteca UI
+- **[TypeScript 5.6.3](https://www.typescriptlang.org/)** - Tipagem estática
+- **[Tailwind CSS 3.4.14](https://tailwindcss.com/)** - Framework CSS utility-first
+- **[shadcn/ui](https://ui.shadcn.com/)** - Componentes UI reutilizáveis (Radix UI)
+- **[Recharts 2.15.4](https://recharts.org/)** - Biblioteca de gráficos
+- **[TanStack Query 5.59.0](https://tanstack.com/query)** - Gerenciamento de estado server (React Query)
+- **[TanStack Table 8.20.5](https://tanstack.com/table)** - Tabelas poderosas e flexíveis
+- **[Zustand 5.0.1](https://zustand-demo.pmnd.rs/)** - State management
+- **[React Hook Form 7.66.0](https://react-hook-form.com/)** - Formulários performáticos
+- **[Zod 3.25.76](https://zod.dev/)** - Validação de schemas
+- **[date-fns 4.1.0](https://date-fns.org/)** - Manipulação de datas
+- **[Lucide React 0.447.0](https://lucide.dev/)** - Ícones modernos
 
 ### Exportação & Visualização
-- **[jsPDF 3.0](https://github.com/parallax/jsPDF)** - Geração de PDFs
-- **[jspdf-autotable 5.0](https://github.com/simonbengtsson/jsPDF-AutoTable)** - Tabelas em PDF
-- **[xlsx 0.18](https://sheetjs.com/)** - Exportação Excel (XLSX)
-- **[html-to-image 1.11](https://github.com/bubkoo/html-to-image)** - Screenshots de gráficos
-- **[react-grid-layout 1.5](https://github.com/react-grid-layout/react-grid-layout)** - Layouts customizáveis e draggable
+- **[jsPDF 3.0.3](https://github.com/parallax/jsPDF)** - Geração de PDFs
+- **[jspdf-autotable 5.0.2](https://github.com/simonbengtsson/jsPDF-AutoTable)** - Tabelas em PDF
+- **[xlsx 0.18.5](https://sheetjs.com/)** - Exportação Excel (XLSX)
+- **[html-to-image 1.11.13](https://github.com/bubkoo/html-to-image)** - Screenshots de gráficos
+- **[react-grid-layout 1.5.2](https://github.com/react-grid-layout/react-grid-layout)** - Layouts customizáveis e draggable
 
 ## 🚀 Quick Start
 
@@ -291,23 +298,26 @@ Para mais detalhes, consulte o [DATA_GENERATORS_GUIDE.md](DATA_GENERATORS_GUIDE.
 mise/
 ├── backend/                    # API REST
 │   ├── src/
-│   │   ├── controllers/       # Controladores de rotas
+│   │   ├── controllers/       # Controladores de rotas (18 controllers)
 │   │   ├── services/          # Lógica de negócio (18 serviços)
-│   │   │   ├── dashboardService.ts
-│   │   │   ├── productService.ts
-│   │   │   ├── channelService.ts
-│   │   │   ├── storeService.ts
-│   │   │   ├── insightsService.ts
-│   │   │   ├── reportsService.ts
-│   │   │   ├── QueryBuilderService.ts      # Novo - Query Builder
-│   │   │   ├── CostService.ts              # Fase 1 - Custos
-│   │   │   ├── ExpenseService.ts           # Fase 1 - Despesas
-│   │   │   ├── FinancialService.ts         # Fase 1 - Financeiro
-│   │   │   ├── ChannelProfitabilityService.ts
-│   │   │   ├── BreakEvenService.ts
-│   │   │   ├── SupplierService.ts
-│   │   │   ├── cacheService.ts
-│   │   │   └── RedisService.ts             # Novo - Redis com ioredis
+│   │   │   ├── dashboardService.ts         # Métricas principais
+│   │   │   ├── productService.ts           # Análise de produtos
+│   │   │   ├── channelService.ts           # Análise de canais
+│   │   │   ├── storeService.ts             # Performance de lojas
+│   │   │   ├── insightsService.ts          # Insights e heatmaps
+│   │   │   ├── reportsService.ts           # Relatórios pré-configurados
+│   │   │   ├── QueryBuilderService.ts      # Query Builder dinâmico
+│   │   │   ├── CostService.ts              # Gestão de custos
+│   │   │   ├── ExpenseService.ts           # Despesas operacionais
+│   │   │   ├── FinancialService.ts         # Análise financeira
+│   │   │   ├── ChannelProfitabilityService.ts  # Rentabilidade
+│   │   │   ├── BreakEvenService.ts         # Ponto de equilíbrio
+│   │   │   ├── SupplierService.ts          # Gestão de fornecedores
+│   │   │   ├── CategoryService.ts          # Categorias
+│   │   │   ├── CustomReportService.ts      # Relatórios customizados
+│   │   │   ├── cacheService.ts             # Cache Redis legado
+│   │   │   ├── RedisService.ts             # Redis com ioredis
+│   │   │   └── TemplateService.ts          # Templates de dashboard
 │   │   ├── routes/            # Definição de rotas
 │   │   ├── middleware/        # Middlewares customizados
 │   │   ├── config/            # Configurações (DB, cache, etc)
@@ -327,16 +337,16 @@ mise/
 │   │   │   │   ├── products/          # Explorador de produtos
 │   │   │   │   ├── stores/            # Performance de lojas
 │   │   │   │   ├── insights/          # Insights inteligentes
-│   │   │   │   ├── financial/costs/   # Análise financeira (Fase 1)
-│   │   │   │   └── query-builder/     # Query Builder (Novo!)
+│   │   │   │   ├── financial/costs/   # Análise financeira
+│   │   │   │   └── query-builder/     # Query Builder customizável
 │   │   │   └── layout.tsx
-│   │   ├── components/        # Componentes React (66+ componentes)
+│   │   ├── components/        # Componentes React (70+ componentes)
 │   │   │   ├── charts/        # Gráficos (Recharts)
 │   │   │   ├── dashboard/     # Componentes específicos
 │   │   │   ├── insights/      # Componentes de insights
 │   │   │   ├── reports/       # Componentes de relatórios
-│   │   │   ├── financial/     # Componentes financeiros (Fase 1)
-│   │   │   ├── query-builder/ # Query Builder (10 componentes)
+│   │   │   ├── financial/     # Componentes financeiros
+│   │   │   ├── query-builder/ # Query Builder (12 componentes)
 │   │   │   │   ├── MetricSelector.tsx
 │   │   │   │   ├── DimensionSelector.tsx
 │   │   │   │   ├── DateFilter.tsx
@@ -346,13 +356,16 @@ mise/
 │   │   │   │   ├── KpiCards.tsx
 │   │   │   │   ├── ExportMenu.tsx
 │   │   │   │   ├── HelpTooltip.tsx
-│   │   │   │   └── QuickStartGuide.tsx
+│   │   │   │   ├── QuickStartGuide.tsx
+│   │   │   │   ├── TemplateSelector.tsx    # Templates
+│   │   │   │   └── MetricsCatalog.tsx      # Catálogo
 │   │   │   ├── layout/        # Sidebar, Header, Navigation
 │   │   │   └── ui/            # Componentes base (shadcn/ui)
 │   │   ├── hooks/             # Custom hooks
 │   │   ├── lib/               # Utilitários e API client
 │   │   │   ├── api.ts         # Cliente API
 │   │   │   ├── export.ts      # Funções de exportação
+│   │   │   ├── exportStoresData.ts  # Export especializado
 │   │   │   └── translations.ts # Sistema de tradução PT-BR
 │   │   ├── store/             # Zustand stores
 │   │   └── types/             # TypeScript types
@@ -560,11 +573,16 @@ Para informações mais detalhadas, consulte:
 
 #### Como usar o Query Builder
 1. Acesse `/dashboard/query-builder`
-2. Selecione as métricas desejadas (ex: Receita Total, Ticket Médio)
-3. Escolha as dimensões para agrupar (ex: Por Produto, Por Canal)
-4. Configure filtros de data e outros critérios
-5. Escolha o tipo de visualização (tabela, gráfico, KPIs)
-6. Exporte os dados em PDF, Excel ou CSV
+2. **Use um template pronto** ou crie uma consulta do zero:
+   - Templates disponíveis: Vendas, Produtos, Canais, Lojas
+   - Cada template já vem com métricas e visualizações pré-configuradas
+3. **Customize sua análise**:
+   - Selecione métricas (ex: Receita Total, Ticket Médio, Margem de Lucro)
+   - Escolha dimensões para agrupar (ex: Por Produto, Por Canal, Por Loja)
+   - Configure filtros de data e outros critérios
+4. Escolha o tipo de visualização (tabela, gráfico de barras/linhas/pizza, KPIs)
+5. Exporte os dados em PDF, Excel ou CSV
+6. Salve sua consulta para reutilização futura
 
 #### Como adicionar novas métricas ao Query Builder
 Edite [backend/src/services/QueryBuilderService.ts](backend/src/services/QueryBuilderService.ts) e adicione:
@@ -672,14 +690,18 @@ npx prisma generate
 
 ## 🗺️ Roadmap
 
-### ✅ Fase 1 - Concluída
+### ✅ Fase 1 - Concluída (Dezembro 2024 - Janeiro 2025)
 - [x] Query Builder com sistema de tradução PT-BR
+- [x] Dashboard Templates pré-configurados (vendas, produtos, canais, lojas)
+- [x] Catálogo de Métricas com documentação
 - [x] Módulo financeiro completo (custos, despesas, fornecedores)
 - [x] Análise de rentabilidade por canal
 - [x] Break-even analysis
 - [x] Exportação premium (PDF, Excel, screenshots)
 - [x] Custom dashboards com layouts draggable
 - [x] Redis cache com ioredis
+- [x] Refatoração de arquitetura de services
+- [x] Otimização de performance e usabilidade
 
 ### 🚧 Próximas Fases (Planejado)
 - [ ] **Fase 2**: Sistema de alertas e notificações
@@ -716,24 +738,28 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 ### Backend
 - **21 Models Prisma** com relações completas (incluindo 4 modelos financeiros da Fase 1)
-- **40+ Endpoints REST** implementados
+- **40+ Endpoints REST** implementados e documentados
+- **18 Controllers** organizados por domínio
 - **18 Services** especializados com lógica de negócio:
   - 6 serviços core (dashboard, products, channels, stores, insights, reports)
   - 6 serviços financeiros (costs, expenses, financial, channel profitability, break-even, suppliers)
-  - 3 serviços de infraestrutura (cache, Redis/ioredis, custom reports)
-  - 1 serviço de Query Builder (15,698 linhas)
+  - 4 serviços de infraestrutura (cache, Redis/ioredis, custom reports, templates)
+  - 2 serviços de análise avançada (Query Builder, categories)
 - **Cache Redis com ioredis** integrado com TTL estratégico por tipo de dado
 - **Type-safe** com TypeScript em 100% do código
+- **Validação robusta** com Zod em todos os endpoints
 
 ### Frontend
 - **8 Páginas** principais de dashboard
-- **66+ Componentes** reutilizáveis e modulares:
-  - 10 componentes do Query Builder
+- **70+ Componentes** reutilizáveis e modulares:
+  - 12 componentes do Query Builder (incluindo templates e catálogo)
   - Componentes financeiros (Fase 1)
   - Componentes de insights e relatórios
-  - shadcn/ui base components
+  - shadcn/ui base components (Radix UI)
 - **15+ Charts** interativos com Recharts
 - **Sistema de tradução PT-BR** para campos técnicos do banco
+- **4 Templates pré-configurados** para dashboards
+- **Catálogo com 15+ métricas** documentadas
 - **Responsive design** mobile-first com Tailwind CSS
 - **Exportação premium**: PDF, Excel (XLSX), CSV e screenshots
 - **Custom layouts** com react-grid-layout
@@ -746,9 +772,9 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 - ⚡ Query Builder executa consultas customizadas em **< 500ms**
 
 ### Linhas de Código (aproximado)
-- **Backend**: ~120,000 linhas (incluindo 18 services)
-- **Frontend**: ~25,000 linhas (incluindo 66+ componentes)
-- **Total**: ~145,000 linhas de código TypeScript/React
+- **Backend**: ~120,000 linhas (18 services + 18 controllers)
+- **Frontend**: ~28,000 linhas (70+ componentes + 8 páginas)
+- **Total**: ~148,000 linhas de código TypeScript/React
 
 ## 🙏 Agradecimentos
 
