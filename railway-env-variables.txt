@@ -4,8 +4,10 @@
 # Database Connection (Reference Postgres service)
 DATABASE_URL=${{Postgres.DATABASE_URL}}
 
-# Redis Connection (Reference Redis service)
-REDIS_URL=${{Redis.REDIS_URL}}
+# Redis Connection
+# Use the environment variables that Railway provides from the Redis service
+REDIS_URL=redis://default:${{REDIS_PASSWORD}}@${{REDISHOST}}:6379
+# Note: REDIS_PASSWORD and REDISHOST are automatically provided by Railway
 
 # Server Configuration
 PORT=3001

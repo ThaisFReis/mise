@@ -9,9 +9,11 @@
     "start": "node dist/server.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
+    "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
     "prisma:pull": "prisma db pull",
-    "prisma:push": "prisma db push"
+    "prisma:push": "prisma db push",
+    "deploy": "prisma migrate deploy && node dist/server.js"
   },
   "keywords": [
     "api",
