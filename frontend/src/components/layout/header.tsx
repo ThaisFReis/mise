@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { Bell, Search, User, ChartPie } from 'lucide-react'
 import { SearchModal } from './search-modal'
 
@@ -26,16 +27,18 @@ export function Header() {
         className="flex h-fit w-screen items-center justify-between pb-6 pr-8 pt-8"
         role="banner"
       >
-        <div className="w-[190px]">
-          {' '}
           {/* Logo */}
-          <div
-            className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-background-secondary p-3 text-primary shadow-gray-soft"
-            aria-hidden="true"
-          >
-            <ChartPie className="h-full w-full" />
-          </div>{' '}
-        </div>
+          <Link href="/" className="group flex items-center gap-4">
+            <div
+              className="ml-16 flex h-14 w-14 items-center justify-center rounded-full bg-background-secondary p-3 text-primary shadow-gray-soft transition-transform group-hover:scale-110"
+              aria-hidden="true"
+            >
+              <ChartPie className="h-full w-full" aria-hidden="true" />
+            </div>
+            <span className="w-0 -translate-x-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-2xl font-bold text-transparent opacity-0 transition-all duration-700 ease-out group-hover:w-auto group-hover:translate-x-0 group-hover:opacity-100">
+              Mise
+            </span>
+          </Link>
 
         <div className="ml-auto mr-0 flex items-center space-x-4">
           <button

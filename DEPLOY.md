@@ -203,7 +203,13 @@ Se você quiser popular o banco com dados de exemplo:
 
 ```bash
 # Via Railway CLI
-railway run python generate_data.py --db-url $DATABASE_URL
+source venv/bin/activate && python generate_data.py \
+    --months 6 \
+    --stores 50 \
+    --products 500 \
+    --items 200 \
+    --customers 10000
+    --db-url $DATABASE_URL
 ```
 
 ## Troubleshooting
