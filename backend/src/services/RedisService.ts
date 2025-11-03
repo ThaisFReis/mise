@@ -5,16 +5,27 @@ export class RedisService {
   private client: Redis;
 
   private constructor() {
-    this.client = new Redis({
-      host: process.env.REDIS_HOST || 'redis',
-      port: parseInt(process.env.REDIS_PORT || '6379'),
-      password: process.env.REDIS_PASSWORD,
-      db: parseInt(process.env.REDIS_DB || '0'),
-      retryStrategy: (times) => {
-        const delay = Math.min(times * 50, 2000);
-        return delay;
-      },
-    });
+    // If REDIS_URL is provided, use it (preferred for Railway and other platforms)
+    // Otherwise, use individual connection parameters
+    const redisUrl = process.env.REDIS_URL;
+
+    this.client = redisUrl
+      ? new Redis(redisUrl, {
+          retryStrategy: (times) => {
+            const delay = Math.min(times * 50, 2000);
+            return delay;
+          },
+        })
+      : new Redis({
+          host: process.env.REDIS_HOST || process.env.REDISHOST || 'redis',
+          port: parseInt(process.env.REDIS_PORT || '6379'),
+          password: process.env.REDIS_PASSWORD,
+          db: parseInt(process.env.REDIS_DB || '0'),
+          retryStrategy: (times) => {
+            const delay = Math.min(times * 50, 2000);
+            return delay;
+          },
+        });
 
     this.client.on('error', (err) => {
       console.error('Redis Client Error:', err);
