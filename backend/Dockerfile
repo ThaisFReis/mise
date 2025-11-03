@@ -3,20 +3,20 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Copy package files
-COPY package*.json ./
-COPY tsconfig.json ./
+COPY backend/package*.json ./
+COPY backend/tsconfig.json ./
 
 # Install all dependencies (including devDependencies)
 RUN npm ci
 
 # Copy prisma schema
-COPY prisma ./prisma
+COPY backend/prisma ./prisma
 
 # Generate Prisma Client
 RUN npx prisma generate
 
 # Copy source code
-COPY src ./src
+COPY backend/src ./src
 
 # Build TypeScript
 RUN npm run build
@@ -27,13 +27,13 @@ FROM node:20-alpine
 WORKDIR /app
 
 # Copy package files
-COPY package*.json ./
+COPY backend/package*.json ./
 
 # Install only production dependencies
 RUN npm ci --omit=dev
 
 # Copy prisma schema and generate client
-COPY prisma ./prisma
+COPY backend/prisma ./prisma
 RUN npx prisma generate
 
 # Copy built files from builder

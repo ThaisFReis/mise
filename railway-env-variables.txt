@@ -1,0 +1,18 @@
+# Environment Variables for Railway Backend Service
+# Copy these to your Railway backend service settings
+
+# Database Connection (Reference Postgres service)
+DATABASE_URL=${{Postgres.DATABASE_URL}}
+
+# Redis Connection (Reference Redis service)
+REDIS_URL=${{Redis.REDIS_URL}}
+
+# Server Configuration
+PORT=3001
+NODE_ENV=production
+
+# CORS Configuration (Update after Vercel deployment)
+CORS_ORIGIN=https://your-app.vercel.app
+
+# Optional: Cache TTL in seconds
+CACHE_TTL=300
