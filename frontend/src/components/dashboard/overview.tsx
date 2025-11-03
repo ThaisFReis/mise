@@ -110,7 +110,7 @@ export function DashboardOverview() {
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Metrics Cards */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <div className="metric-card group shadow-gray-soft">
           <div className="flex flex-row items-center justify-between space-y-0 pb-2">
             <h3 className="text-sm font-medium text-muted-foreground">Faturamento Total</h3>
@@ -122,7 +122,7 @@ export function DashboardOverview() {
               <div className="text-sm text-destructive">Erro ao carregar</div>
             ) : (
               <>
-                <div className="text-2xl font-bold text-foreground">{formatCurrency(metrics?.totalRevenue || 0)}</div>
+                <div className="text-xl sm:text-2xl font-bold text-foreground">{formatCurrency(metrics?.totalRevenue || 0)}</div>
                 <p className="text-xs text-muted-foreground mt-1">
                   <span className={(metrics?.revenueChange || 0) >= 0 ? 'trend-up font-medium' : 'trend-down font-medium'}>
                     {formatPercentage(metrics?.revenueChange || 0)}
@@ -144,7 +144,7 @@ export function DashboardOverview() {
               <div className="text-sm text-destructive">Erro ao carregar</div>
             ) : (
               <>
-                <div className="text-2xl font-bold text-foreground">{formatNumber(metrics?.totalSales || 0)}</div>
+                <div className="text-xl sm:text-2xl font-bold text-foreground">{formatNumber(metrics?.totalSales || 0)}</div>
                 <p className="text-xs text-muted-foreground mt-1">
                   <span className={(metrics?.salesChange || 0) >= 0 ? 'trend-up font-medium' : 'trend-down font-medium'}>
                     {formatPercentage(metrics?.salesChange || 0)}
@@ -166,7 +166,7 @@ export function DashboardOverview() {
               <div className="text-sm text-destructive">Erro ao carregar</div>
             ) : (
               <>
-                <div className="text-2xl font-bold text-foreground">{formatCurrency(metrics?.averageTicket || 0)}</div>
+                <div className="text-xl sm:text-2xl font-bold text-foreground">{formatCurrency(metrics?.averageTicket || 0)}</div>
                 <p className="text-xs text-muted-foreground mt-1">
                   <span className={(metrics?.ticketChange || 0) >= 0 ? 'trend-up font-medium' : 'trend-down font-medium'}>
                     {formatPercentage(metrics?.ticketChange || 0)}
@@ -188,7 +188,7 @@ export function DashboardOverview() {
               <div className="text-sm text-destructive">Erro ao carregar</div>
             ) : (
               <>
-                <div className="text-2xl font-bold text-foreground">{(metrics?.cancellationRate || 0).toFixed(1)}%</div>
+                <div className="text-xl sm:text-2xl font-bold text-foreground">{(metrics?.cancellationRate || 0).toFixed(1)}%</div>
                 <p className="text-xs text-muted-foreground mt-1">
                   <span className={(metrics?.cancelRateChange || 0) <= 0 ? 'trend-up font-medium' : 'trend-down font-medium'}>
                     {formatPercentage(metrics?.cancelRateChange || 0)}
@@ -201,7 +201,7 @@ export function DashboardOverview() {
       </div>
 
       {/* Charts Row */}
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2">
         <ChartContainer
           title="Vendas por Hora"
           loading={hourlySalesLoading}
@@ -209,7 +209,7 @@ export function DashboardOverview() {
         >
           <HourlySalesChart data={hourlySalesData || []} />
         </ChartContainer>
-        
+
         <ChannelRevenueChart
           data={channelRevenueData || []}
           loading={channelRevenueLoading}
@@ -218,12 +218,12 @@ export function DashboardOverview() {
       </div>
 
       {/* Top Products and Top Stores Row */}
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 xl:grid-cols-2">
         {/* Top Products */}
         <div className="metric-card">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-foreground">Top 5 Produtos Mais Vendidos</h3>
-            <span className="text-xs text-muted-foreground px-3 py-1 rounded-full bg-muted">Este período</span>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-2">
+            <h3 className="text-base sm:text-lg font-semibold text-foreground">Top 5 Produtos Mais Vendidos</h3>
+            <span className="text-xs text-muted-foreground px-3 py-1 rounded-full bg-muted self-start sm:self-auto">Este período</span>
           </div>
           {productsLoading ? (
             <div className="space-y-3">
@@ -236,19 +236,19 @@ export function DashboardOverview() {
           ) : topProducts && topProducts.length > 0 ? (
             <div className="space-y-2">
               {topProducts.map((product, index) => (
-                <div key={product.id || index} className="flex items-center justify-between p-4 rounded-lg bg-card hover:bg-muted transition duration-500 group hover:scale-105">
+                <div key={product.id || index} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 rounded-lg bg-card hover:bg-muted transition duration-500 gap-3">
                   <div className="flex items-center gap-3">
                     <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary font-bold text-sm">
                       #{index + 1}
                     </div>
-                    <div>
-                      <p className="font-medium text-foreground group-hover:text-primary transition-colors">{product.name}</p>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium text-foreground group-hover:text-primary transition-colors truncate">{product.name}</p>
                       <p className="text-sm text-muted-foreground">
                         {formatNumber(product.quantitySold)} vendidos • {product.category}
                       </p>
                     </div>
                   </div>
-                  <div className="text-right">
+                  <div className="text-left sm:text-right">
                     <p className="font-semibold text-foreground">{formatCurrency(product.revenue)}</p>
                     <p className={`text-xs font-medium ${product.trend === 'up' ? 'trend-up' : product.trend === 'down' ? 'trend-down' : 'trend-neutral'}`}>
                       {product.trend === 'up' ? '↑' : product.trend === 'down' ? '↓' : '•'} {formatPercentage(product.trendPercentage || 0)}
@@ -266,9 +266,9 @@ export function DashboardOverview() {
 
         {/* Top Stores */}
         <div className="metric-card">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-foreground">Top 5 Lojas com Maior Faturamento</h3>
-            <span className="text-xs text-muted-foreground px-3 py-1 rounded-full bg-muted">Este período</span>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-2">
+            <h3 className="text-base sm:text-lg font-semibold text-foreground">Top 5 Lojas com Maior Faturamento</h3>
+            <span className="text-xs text-muted-foreground px-3 py-1 rounded-full bg-muted self-start sm:self-auto">Este período</span>
           </div>
           {storesLoading ? (
             <div className="space-y-3">
@@ -281,19 +281,19 @@ export function DashboardOverview() {
           ) : topStores && topStores.length > 0 ? (
             <div className="space-y-2">
               {topStores.map((store, index) => (
-                <div key={store.storeId} className="flex items-center justify-between p-4 rounded-lg bg-card hover:bg-muted transition duration-500 group hover:scale-105">
+                <div key={store.storeId} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 rounded-lg bg-card hover:bg-muted transition duration-500 gap-3">
                   <div className="flex items-center gap-3">
                     <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-chart-2/10 text-chart-2 font-bold text-sm">
                       #{store.rank}
                     </div>
-                    <div>
-                      <p className="font-medium text-foreground group-hover:text-chart-2 transition-colors">{store.storeName}</p>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium text-foreground group-hover:text-chart-2 transition-colors truncate">{store.storeName}</p>
                       <p className="text-sm text-muted-foreground">
                         {formatNumber(store.orderCount)} pedidos • {store.city}
                       </p>
                     </div>
                   </div>
-                  <div className="text-right">
+                  <div className="text-left sm:text-right">
                     <p className="font-semibold text-foreground">{formatCurrency(store.revenue)}</p>
                     <p className="text-xs text-muted-foreground">
                       {store.percentOfTotal.toFixed(1)}% do total

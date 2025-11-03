@@ -29,7 +29,7 @@ export default function DashboardLayout({
       <Header />
       <div className="flex flex-1">
         <Sidebar />
-        <main id="main-content" className="flex-1 my-6 w-full mx-8" role="main" aria-label="Conteúdo principal">
+        <main id="main-content" className="flex-1 my-6 w-full mx-4 md:mx-8" role="main" aria-label="Conteúdo principal">
               {children}
         </main>
       </div>

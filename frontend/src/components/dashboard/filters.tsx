@@ -127,20 +127,20 @@ export function DashboardFilters() {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-3 p-4 bg-card rounded-lg border border-border shadow-sm">
+    <div className="flex flex-col gap-3 p-4 bg-card rounded-lg border border-border shadow-sm md:flex-row md:items-center md:gap-3">
       <div className="flex items-center gap-2 text-sm font-medium text-foreground">
         <Filter className="h-4 w-4" />
         <span>Filtros:</span>
       </div>
 
       {/* Period Filter */}
-      <div className="flex items-center gap-2">
-        <div className="flex rounded-md overflow-hidden border border-border">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-2">
+        <div className="flex rounded-md overflow-hidden border border-border w-full sm:w-auto">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => handleQuickDateRange('today')}
-            className="rounded-none border-r border-border hover:bg-muted"
+            className="rounded-none border-r border-border hover:bg-muted flex-1 sm:flex-none"
           >
             Hoje
           </Button>
@@ -148,7 +148,7 @@ export function DashboardFilters() {
             variant="ghost"
             size="sm"
             onClick={() => handleQuickDateRange('7days')}
-            className="rounded-none border-r border-border hover:bg-muted"
+            className="rounded-none border-r border-border hover:bg-muted flex-1 sm:flex-none"
           >
             7 dias
           </Button>
@@ -156,7 +156,7 @@ export function DashboardFilters() {
             variant="ghost"
             size="sm"
             onClick={() => handleQuickDateRange('30days')}
-            className="rounded-none hover:bg-muted"
+            className="rounded-none hover:bg-muted flex-1 sm:flex-none"
           >
             30 dias
           </Button>
@@ -167,12 +167,12 @@ export function DashboardFilters() {
             <Button
               variant="outline"
               className={cn(
-                'justify-start text-left font-normal min-w-[240px]',
+                'justify-start text-left font-normal min-w-[240px] w-full sm:w-auto',
                 !dateRange && 'text-muted-foreground'
               )}
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
-              {getDateRangeText()}
+              <span className="truncate">{getDateRangeText()}</span>
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="start">
@@ -181,7 +181,8 @@ export function DashboardFilters() {
               defaultMonth={dateRange?.from}
               selected={dateRange}
               onSelect={handleCustomDateRange}
-              numberOfMonths={2}
+              numberOfMonths={1}
+              className="sm:block"
               locale={ptBR}
             />
           </PopoverContent>
@@ -193,7 +194,7 @@ export function DashboardFilters() {
         variant="outline"
         size="sm"
         onClick={handleReset}
-        className="ml-auto"
+        className="w-full sm:w-auto sm:ml-auto"
       >
         <RotateCcw className="h-4 w-4 mr-2" />
         Limpar filtros
