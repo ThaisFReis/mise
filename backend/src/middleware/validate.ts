@@ -24,7 +24,7 @@ export const validate = (schema: AnyZodObject) => {
           })),
         });
       }
-      next(error);
+      return next(error);
     }
   };
 };
@@ -48,7 +48,7 @@ export const validateBody = (schema: AnyZodObject) => {
           })),
         });
       }
-      next(error);
+      return next(error);
     }
   };
 };
@@ -81,7 +81,7 @@ export const validateQuery = (schema: AnyZodObject) => {
           })),
         });
       }
-      next(error);
+      return next(error);
     }
   };
 };
@@ -112,7 +112,7 @@ export const validateParams = (schema: AnyZodObject) => {
           })),
         });
       }
-      next(error);
+      return next(error);
     }
   };
 };
