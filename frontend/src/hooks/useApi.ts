@@ -325,6 +325,19 @@ export function useAutoInsights(
   })
 }
 
+export function useRecommendations(
+  filters: Omit<InsightsFilters, 'metric' | 'granularity'>,
+  options?: Omit<UseQueryOptions<string[]>, 'queryKey' | 'queryFn'>
+) {
+  return useQuery({
+    queryKey: queryKeys.insights.recommendations(filters),
+    queryFn: () => api.getRecommendations(filters),
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    enabled: false, // Only fetch when explicitly called
+    ...options,
+  })
+}
+
 // Reports hooks
 export interface ReportFilters extends DateFilter {
   storeId?: string

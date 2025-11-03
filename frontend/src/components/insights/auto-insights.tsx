@@ -2,12 +2,16 @@
 
 import { AutoInsight } from '@/types'
 import { Card } from '@/components/ui/card'
-import { AlertCircle, TrendingUp, Lightbulb, AlertTriangle, CheckCircle, Info } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { AlertCircle, TrendingUp, Lightbulb, AlertTriangle, CheckCircle, Info, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface AutoInsightsProps {
   insights: AutoInsight[]
   loading?: boolean
+  recommendations?: string[]
+  onGenerateRecommendations?: () => void
+  recommendationsLoading?: boolean
 }
 
 function InsightCard({ insight }: { insight: AutoInsight }) {
@@ -106,7 +110,13 @@ function InsightCard({ insight }: { insight: AutoInsight }) {
   )
 }
 
-export function AutoInsightsComponent({ insights, loading }: AutoInsightsProps) {
+export function AutoInsightsComponent({
+  insights,
+  loading,
+  recommendations,
+  onGenerateRecommendations,
+  recommendationsLoading
+}: AutoInsightsProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-48">
@@ -213,23 +223,59 @@ export function AutoInsightsComponent({ insights, loading }: AutoInsightsProps) 
         ))}
       </div>
 
-      {/* Actionable insights section */}
+      {/* AI-powered recommendations section */}
       {insights.some(i => i.actionable) && (
         <Card className="p-6 border-2 border-primary/20 bg-primary/5">
           <div className="flex items-start gap-3">
-            <Lightbulb className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-            <div>
-              <h4 className="font-semibold mb-2">Ações Recomendadas</h4>
-              <ul className="space-y-2 text-sm">
-                {insights
-                  .filter(i => i.actionable)
-                  .map(insight => (
-                    <li key={insight.id} className="flex items-start gap-2">
-                      <span className="text-primary">•</span>
-                      <span>{insight.description}</span>
+            <Sparkles className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="font-semibold">Ações Recomendadas por IA</h4>
+                {onGenerateRecommendations && (
+                  <Button
+                    size="sm"
+                    onClick={onGenerateRecommendations}
+                    disabled={recommendationsLoading}
+                    className="ml-2"
+                  >
+                    {recommendationsLoading ? (
+                      <>
+                        <span className="animate-spin mr-2">⏳</span>
+                        Gerando...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="h-4 w-4 mr-2" />
+                        {recommendations && recommendations.length > 0 ? 'Atualizar' : 'Gerar com IA'}
+                      </>
+                    )}
+                  </Button>
+                )}
+              </div>
+
+              {recommendationsLoading ? (
+                <div className="text-sm text-muted-foreground animate-pulse">
+                  Analisando seus dados e gerando recomendações personalizadas...
+                </div>
+              ) : recommendations && recommendations.length > 0 ? (
+                <ul className="space-y-2 text-sm">
+                  {recommendations.map((recommendation, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="text-primary mt-1">•</span>
+                      <span>{recommendation}</span>
                     </li>
                   ))}
-              </ul>
+                </ul>
+              ) : (
+                <div className="text-sm text-muted-foreground">
+                  <p className="mb-2">
+                    Clique no botão acima para gerar recomendações personalizadas usando IA (DeepSeek).
+                  </p>
+                  <p className="text-xs">
+                    Nossas recomendações são baseadas nos insights detectados e no contexto atual do seu restaurante.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </Card>

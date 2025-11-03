@@ -4,6 +4,7 @@ import {
   getPeriodComparisonData,
   getTimeline,
   getInsights,
+  getRecommendations,
 } from '../controllers/insightsController';
 
 const router = Router();
@@ -35,5 +36,12 @@ router.get('/timeline', getTimeline);
  * @query   startDate, endDate, storeId, channelId
  */
 router.get('/auto-insights', getInsights);
+
+/**
+ * @route   GET /api/insights/recommendations
+ * @desc    Generate AI-powered recommendations based on insights using DeepSeek
+ * @query   startDate, endDate, storeId, channelId
+ */
+router.get('/recommendations', getRecommendations);
 
 export default router;

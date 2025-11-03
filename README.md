@@ -10,6 +10,7 @@
 ![API Endpoints](https://img.shields.io/badge/API_Endpoints-40+-00AA00)
 ![Components](https://img.shields.io/badge/Components-66+-purple)
 ![Services](https://img.shields.io/badge/Services-18-orange)
+![AI Powered](https://img.shields.io/badge/AI-DeepSeek-purple)
 
 **Mise** é uma plataforma completa de análise de dados para restaurantes, oferecendo insights detalhados sobre vendas, produtos, canais e performance operacional. Desenvolvida com tecnologias modernas e foco em performance e experiência do usuário.
 
@@ -44,6 +45,7 @@
 ## 🚀 Novidades
 
 ### Funcionalidades Recentes (Fase 1 - Concluída)
+- 🤖 **Recomendações com IA (DeepSeek)**: Gere ações recomendadas personalizadas usando inteligência artificial
 - 🎯 **Dashboard Templates**: Sistema de templates pré-configurados para análises rápidas (vendas, produtos, canais, lojas)
 - 📊 **Catálogo de Métricas**: Biblioteca com 15+ métricas prontas para uso em dashboards customizados
 - 🔍 **Query Builder**: Construtor visual de consultas com sistema de tradução PT-BR - crie análises customizadas escolhendo métricas e dimensões
@@ -110,6 +112,11 @@ Visualize padrões de vendas através de heatmaps e análises temporais avançad
 - **Comparação de períodos**: Compare performance atual vs período anterior
 - **Insights automáticos**: Identifique automaticamente tendências, picos e anomalias
 - **Padrões de comportamento**: Descubra horários de pico e sazonalidades
+- **🤖 Recomendações com IA (DeepSeek)**: Gere recomendações acionáveis personalizadas baseadas em insights e métricas
+  - Análise contextual de dados do restaurante
+  - Sugestões práticas e específicas
+  - Priorização por impacto vs. esforço
+  - Geração sob demanda via botão no dashboard
 
 ### 🔍 Query Builder & Dashboards Customizados
 - **Templates Pré-configurados**: Dashboards prontos para vendas, produtos, canais e lojas
@@ -171,6 +178,7 @@ Visualize padrões de vendas através de heatmaps e análises temporais avançad
 - **[PostgreSQL 15](https://www.postgresql.org/)** - Banco de dados relacional
 - **[Redis 7](https://redis.io/)** - Cache em memória
 - **[ioredis 5.8.2](https://github.com/redis/ioredis)** - Cliente Redis robusto para Node.js
+- **[DeepSeek API](https://www.deepseek.com/)** - Inteligência artificial para recomendações
 - **[Zod 3.23.8](https://zod.dev/)** - Validação de schemas
 - **[date-fns 4.1.0](https://date-fns.org/)** - Manipulação de datas
 - **[Docker](https://www.docker.com/)** - Containerização
@@ -452,6 +460,7 @@ npm run lint
 - `GET /api/insights/period-comparison` - Comparação entre períodos
 - `GET /api/insights/timeline` - Timeline com granularidade configurável
 - `GET /api/insights/auto-insights` - Insights automáticos baseados em padrões
+- `GET /api/insights/recommendations` - 🤖 Recomendações geradas por IA (DeepSeek)
 
 ### Relatórios
 - `GET /api/reports/top-products` - Relatório de top produtos
@@ -529,6 +538,9 @@ NODE_ENV="development"
 # CORS
 CORS_ORIGIN="http://localhost:3000"
 
+# DeepSeek API (para recomendações com IA)
+DEEPSEEK_API_KEY="your-deepseek-api-key"
+
 # Cache (opcional)
 CACHE_TTL=3600  # Tempo de vida do cache em segundos
 ```
@@ -564,6 +576,7 @@ Para informações mais detalhadas, consulte:
 
 - **[BACKEND_SETUP.md](BACKEND_SETUP.md)** - Guia completo de configuração do backend
 - **[IMPLEMENTACAO_BACKEND.md](IMPLEMENTACAO_BACKEND.md)** - Relatório técnico da implementação
+- **[DEEPSEEK_INTEGRATION.md](DEEPSEEK_INTEGRATION.md)** - 🤖 Integração completa com DeepSeek para recomendações com IA
 - **[mvp_spec.md](mvp_spec.md)** - Especificação completa do MVP e features
 - **[DATA_GENERATORS_GUIDE.md](DATA_GENERATORS_GUIDE.md)** - Comparação entre geradores de dados v1 (MVP) e v2 (Fase 1)
 - **[START.md](START.md)** - Guia rápido de início
@@ -583,6 +596,21 @@ Para informações mais detalhadas, consulte:
 4. Escolha o tipo de visualização (tabela, gráfico de barras/linhas/pizza, KPIs)
 5. Exporte os dados em PDF, Excel ou CSV
 6. Salve sua consulta para reutilização futura
+
+#### Como usar Recomendações com IA
+1. Acesse `/dashboard/insights` → aba **Padrões Temporais**
+2. Role até a seção **Insights Automáticos**
+3. Se houver insights acionáveis, você verá **Ações Recomendadas por IA**
+4. Clique em **"Gerar com IA"** para criar recomendações personalizadas
+5. A IA analisará seus dados e retornará 3-5 recomendações práticas
+6. Use **"Atualizar"** para gerar novas recomendações baseadas em dados atuais
+
+**Funciona assim:**
+- Analisa insights acionáveis detectados automaticamente
+- Considera métricas atuais (receita, vendas, ticket médio, cancelamentos)
+- Compara com período anterior para contexto
+- Gera recomendações específicas priorizadas por impacto
+- Usa DeepSeek como modelo de IA com prompt especializado em restaurantes
 
 #### Como adicionar novas métricas ao Query Builder
 Edite [backend/src/services/QueryBuilderService.ts](backend/src/services/QueryBuilderService.ts) e adicione:
@@ -702,6 +730,7 @@ npx prisma generate
 - [x] Redis cache com ioredis
 - [x] Refatoração de arquitetura de services
 - [x] Otimização de performance e usabilidade
+- [x] 🤖 Integração com DeepSeek para recomendações com IA
 
 ### 🚧 Próximas Fases (Planejado)
 - [ ] **Fase 2**: Sistema de alertas e notificações
@@ -740,11 +769,12 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 - **21 Models Prisma** com relações completas (incluindo 4 modelos financeiros da Fase 1)
 - **40+ Endpoints REST** implementados e documentados
 - **18 Controllers** organizados por domínio
-- **18 Services** especializados com lógica de negócio:
+- **19 Services** especializados com lógica de negócio:
   - 6 serviços core (dashboard, products, channels, stores, insights, reports)
   - 6 serviços financeiros (costs, expenses, financial, channel profitability, break-even, suppliers)
-  - 4 serviços de infraestrutura (cache, Redis/ioredis, custom reports, templates)
+  - 5 serviços de infraestrutura (cache, Redis/ioredis, custom reports, templates, **DeepSeek AI**)
   - 2 serviços de análise avançada (Query Builder, categories)
+- **Integração com IA**: DeepSeek para recomendações personalizadas
 - **Cache Redis com ioredis** integrado com TTL estratégico por tipo de dado
 - **Type-safe** com TypeScript em 100% do código
 - **Validação robusta** com Zod em todos os endpoints

@@ -292,6 +292,21 @@ class ApiClient {
     return response.data
   }
 
+  async getRecommendations(filters: any): Promise<string[]> {
+    const params = new URLSearchParams()
+    if (filters?.startDate) params.append('startDate', filters.startDate)
+    if (filters?.endDate) params.append('endDate', filters.endDate)
+    if (filters?.storeId) params.append('storeId', filters.storeId)
+    if (filters?.channelId) params.append('channelId', filters.channelId)
+
+    const queryString = params.toString()
+    const response = await this.request<{ success: boolean; data: string[] }>(
+      `/insights/recommendations${queryString ? `?${queryString}` : ''}`,
+      { method: 'GET' }
+    )
+    return response.data
+  }
+
   // Reports endpoints
   async getTopProductsReport(filters: any): Promise<TopProduct[]> {
     const params = new URLSearchParams()
@@ -428,6 +443,7 @@ export const queryKeys = {
     periodComparison: (filters: any) => ['insights', 'period-comparison', filters] as const,
     timeline: (filters: any) => ['insights', 'timeline', filters] as const,
     autoInsights: (filters: any) => ['insights', 'auto-insights', filters] as const,
+    recommendations: (filters: any) => ['insights', 'recommendations', filters] as const,
   },
   reports: {
     topProducts: (filters: any) => ['reports', 'top-products', filters] as const,

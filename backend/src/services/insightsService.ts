@@ -286,6 +286,147 @@ export async function getTimelineData(
 }
 
 /**
+ * Get top performing products for insights
+ */
+async function getTopProducts(filters: InsightsFilters, limit: number = 5): Promise<Array<{productId: number, name: string, revenue: number, orders: number}>> {
+  // Build where clause for the Sale relationship
+  const saleWhereClause: any = {
+    saleStatusDesc: { not: 'CANCELLED' },
+  };
+
+  if (filters.startDate) {
+    saleWhereClause.createdAt = {
+      ...saleWhereClause.createdAt,
+      gte: new Date(filters.startDate),
+    };
+  }
+
+  if (filters.endDate) {
+    saleWhereClause.createdAt = {
+      ...saleWhereClause.createdAt,
+      lte: new Date(filters.endDate),
+    };
+  }
+
+  if (filters.storeId) saleWhereClause.storeId = filters.storeId;
+  if (filters.channelId) saleWhereClause.channelId = filters.channelId;
+
+  // ProductSale where clause with nested sale filter
+  const productSales = await prisma.productSale.groupBy({
+    by: ['productId'],
+    where: {
+      sale: saleWhereClause,
+    },
+    _sum: {
+      totalPrice: true,
+      quantity: true,
+    },
+    _count: {
+      saleId: true,
+    },
+    orderBy: {
+      _sum: {
+        totalPrice: 'desc',
+      },
+    },
+    take: limit,
+  });
+
+  // Get product names
+  const productIds = productSales.map(p => p.productId);
+  const products = await prisma.product.findMany({
+    where: { id: { in: productIds } },
+    select: { id: true, name: true },
+  });
+
+  const productMap = new Map(products.map(p => [p.id, p.name]));
+
+  return productSales.map(ps => ({
+    productId: ps.productId,
+    name: productMap.get(ps.productId) || 'Produto Desconhecido',
+    revenue: Number(ps._sum.totalPrice || 0),
+    orders: ps._count.saleId,
+  }));
+}
+
+/**
+ * Get store performance comparison
+ */
+async function getStoreComparison(filters: InsightsFilters): Promise<Array<{storeId: number, name: string, revenue: number, change: number}>> {
+  const whereClause: any = {
+    saleStatusDesc: { not: 'CANCELLED' },
+  };
+
+  if (filters.startDate) {
+    whereClause.createdAt = {
+      ...whereClause.createdAt,
+      gte: new Date(filters.startDate),
+    };
+  }
+
+  if (filters.endDate) {
+    whereClause.createdAt = {
+      ...whereClause.createdAt,
+      lte: new Date(filters.endDate),
+    };
+  }
+
+  if (filters.channelId) whereClause.channelId = filters.channelId;
+
+  // Current period
+  const currentSales = await prisma.sale.groupBy({
+    by: ['storeId'],
+    where: whereClause,
+    _sum: { totalAmount: true },
+  });
+
+  // Previous period
+  const endDate = filters.endDate ? new Date(filters.endDate) : new Date();
+  const startDate = filters.startDate ? new Date(filters.startDate) : new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000);
+  const periodDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000));
+  const previousStart = new Date(startDate.getTime() - periodDays * 24 * 60 * 60 * 1000);
+
+  const previousWhereClause = {
+    ...whereClause,
+    createdAt: {
+      gte: previousStart,
+      lte: startDate,
+    },
+  };
+
+  const previousSales = await prisma.sale.groupBy({
+    by: ['storeId'],
+    where: previousWhereClause,
+    _sum: { totalAmount: true },
+  });
+
+  // Get store names
+  const storeIds = [...new Set([...currentSales.map(s => s.storeId), ...previousSales.map(s => s.storeId)])];
+  const stores = await prisma.store.findMany({
+    where: { id: { in: storeIds } },
+    select: { id: true, name: true },
+  });
+
+  const storeMap = new Map(stores.map(s => [s.id, s.name]));
+
+  const currentMap = new Map(currentSales.map(s => [s.storeId, Number(s._sum.totalAmount || 0)]));
+  const previousMap = new Map(previousSales.map(s => [s.storeId, Number(s._sum.totalAmount || 0)]));
+
+  return storeIds.map(storeId => {
+    const current = currentMap.get(storeId) || 0;
+    const previous = previousMap.get(storeId) || 0;
+    const change = previous > 0 ? ((current - previous) / previous) * 100 : (current > 0 ? 100 : 0);
+
+    return {
+      storeId,
+      name: storeMap.get(storeId) || 'Loja Desconhecida',
+      revenue: current,
+      change,
+    };
+  }).sort((a, b) => Math.abs(b.change) - Math.abs(a.change));
+}
+
+/**
  * Generate automated insights based on data patterns
  */
 export async function getAutoInsights(
@@ -309,14 +450,48 @@ export async function getAutoInsights(
     filters.channelId
   );
 
-  // Revenue trend insight
+  // Get granular data for better insights
+  const [topProducts, storeComparison] = await Promise.all([
+    getTopProducts(filters, 3),
+    getStoreComparison(filters),
+  ]);
+
+  // Revenue trend insight with store/product breakdown and cause analysis
   if (Math.abs(comparison.changes.revenue) > 5) {
+    let description = `Seu faturamento ${comparison.changes.revenue > 0 ? 'cresceu' : 'caiu'} ${Math.abs(comparison.changes.revenue).toFixed(1)}% em relação ao período anterior`;
+    let possibleCauses = '';
+
+    // Analyze seasonal factors
+    const currentMonth = new Date().getMonth();
+    const isHolidaySeason = currentMonth === 11 || currentMonth === 0; // Dec/Jan
+    const isSummer = currentMonth >= 5 && currentMonth <= 7; // Jun-Aug
+
+    if (comparison.changes.revenue < 0) {
+      if (isHolidaySeason) {
+        possibleCauses = 'Possível causa: Baixa temporada pós-festas ou competição sazonal';
+      } else if (isSummer) {
+        possibleCauses = 'Possível causa: Menor movimento no verão ou fatores climáticos';
+      } else {
+        possibleCauses = 'Possível causa: Fatores operacionais ou de mercado';
+      }
+    }
+
+    // Add store-specific insights
+    const worstStore = storeComparison.find(s => s.change < -10);
+    if (worstStore && !filters.storeId) {
+      description += `. A loja ${worstStore.name} teve a maior queda (${worstStore.change.toFixed(1)}%)`;
+    }
+
+    if (possibleCauses) {
+      description += `. ${possibleCauses}`;
+    }
+
     insights.push({
       id: `revenue-trend-${Date.now()}`,
       type: 'trend',
       severity: comparison.changes.revenue > 0 ? 'success' : 'warning',
       title: comparison.changes.revenue > 0 ? 'Crescimento de Faturamento' : 'Queda de Faturamento',
-      description: `Seu faturamento ${comparison.changes.revenue > 0 ? 'cresceu' : 'caiu'} ${Math.abs(comparison.changes.revenue).toFixed(1)}% em relação ao período anterior`,
+      description,
       metric: 'revenue',
       change: comparison.changes.revenue,
       actionable: comparison.changes.revenue < 0,
@@ -354,19 +529,67 @@ export async function getAutoInsights(
     });
   }
 
-  // Cancellation rate insight
+  // Cancellation rate insight with cause analysis
   if (comparison.current.cancellationRate > 10) {
+    let description = `Sua taxa de cancelamento está em ${comparison.current.cancellationRate.toFixed(1)}%, acima do recomendado`;
+    let possibleCauses = '';
+
+    // Analyze possible causes based on rate and change
+    if (comparison.changes.cancelRate > 20) {
+      possibleCauses = 'Possível causa: Problemas recentes em delivery ou qualidade do produto';
+    } else if (comparison.current.cancellationRate > 20) {
+      possibleCauses = 'Possível causa: Questões estruturais em atendimento ou logística';
+    } else {
+      possibleCauses = 'Possível causa: Fatores externos como condições climáticas ou alta demanda';
+    }
+
+    description += `. ${possibleCauses}`;
+
     insights.push({
       id: `cancel-rate-${Date.now()}`,
       type: 'anomaly',
       severity: 'error',
       title: 'Taxa de Cancelamento Elevada',
-      description: `Sua taxa de cancelamento está em ${comparison.current.cancellationRate.toFixed(1)}%, acima do recomendado`,
+      description,
       metric: 'cancelRate',
       change: comparison.changes.cancelRate,
       actionable: true,
       createdAt: new Date().toISOString(),
     });
+  }
+
+  // Product performance insights
+  if (topProducts.length > 0) {
+    const bestProduct = topProducts[0];
+    insights.push({
+      id: `top-product-${Date.now()}`,
+      type: 'recommendation',
+      severity: 'info',
+      title: 'Produto Destaque',
+      description: `${bestProduct.name} é seu produto mais vendido (R$ ${bestProduct.revenue.toFixed(2)} em ${bestProduct.orders} pedidos)`,
+      actionable: true,
+      createdAt: new Date().toISOString(),
+    });
+  }
+
+  // Store-specific insights
+  if (!filters.storeId && storeComparison.length > 1) {
+    const significantChanges = storeComparison.filter(s => Math.abs(s.change) > 15);
+    if (significantChanges.length > 0) {
+      const worstStore = significantChanges.reduce((worst, current) =>
+        current.change < worst.change ? current : worst
+      );
+
+      insights.push({
+        id: `store-performance-${Date.now()}`,
+        type: 'anomaly',
+        severity: worstStore.change < 0 ? 'warning' : 'success',
+        title: worstStore.change < 0 ? 'Loja com Desempenho Preocupante' : 'Loja com Alto Crescimento',
+        description: `A loja ${worstStore.name} teve ${worstStore.change > 0 ? 'crescimento' : 'queda'} de ${Math.abs(worstStore.change).toFixed(1)}% no faturamento`,
+        actionable: worstStore.change < 0,
+        createdAt: new Date().toISOString(),
+      });
+    }
   }
 
   // Get peak hours for insight
