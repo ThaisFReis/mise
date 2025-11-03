@@ -4,6 +4,30 @@ import { ChannelPerformance, ChannelTopProduct, ChannelPeakHour, ChannelTimeline
 import { startOfDay, endOfDay } from 'date-fns';
 
 export class ChannelService {
+  async getChannels() {
+    const cacheKey = 'channels:all';
+    const cached = await cacheService.get(cacheKey);
+
+    if (cached) {
+      return cached;
+    }
+
+    const channels = await prisma.channel.findMany({
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        type: true,
+      },
+      orderBy: {
+        id: 'asc',
+      },
+    });
+
+    await cacheService.set(cacheKey, channels, 3600); // Cache for 1 hour
+    return channels;
+  }
+
   async getChannelPerformance(dateRange: DateRange): Promise<ChannelPerformance[]> {
     const cacheKey = cacheService.buildKey('channels:performance', dateRange);
     const cached = await cacheService.get<ChannelPerformance[]>(cacheKey);

@@ -23,9 +23,6 @@ import type {
   ChannelComparisonData,
   MonthlySummaryData,
   StoreRankingData,
-  ProductCost,
-  Supplier,
-  CostHistory,
 } from '@/types'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
@@ -396,101 +393,6 @@ class ApiClient {
     return response.data
   }
 
-  // Financial Analysis - Costs endpoints
-  async getCosts(filters?: any): Promise<ProductCost[]> {
-    const queryParams = this.buildQueryParams(filters || {})
-    const response = await this.request<{ success: boolean; data: ProductCost[] }>(
-      `/financial/costs${queryParams}`,
-      { method: 'GET' }
-    )
-    return response.data
-  }
-
-  async createCost(data: any): Promise<ProductCost> {
-    const response = await this.request<{ success: boolean; data: ProductCost }>(
-      '/financial/costs',
-      {
-        method: 'POST',
-        body: data,
-      }
-    )
-    return response.data
-  }
-
-  async updateCost(id: string, data: any): Promise<ProductCost> {
-    const response = await this.request<{ success: boolean; data: ProductCost }>(
-      `/financial/costs/${id}`,
-      {
-        method: 'PUT',
-        body: data,
-      }
-    )
-    return response.data
-  }
-
-  async deleteCost(id: string): Promise<void> {
-    await this.request<{ success: boolean }>(
-      `/financial/costs/${id}`,
-      { method: 'DELETE' }
-    )
-  }
-
-  async getCostHistory(productId?: string): Promise<CostHistory[]> {
-    const endpoint = productId
-      ? `/financial/costs/history?productId=${productId}`
-      : '/financial/costs/history'
-    const response = await this.request<{ success: boolean; data: CostHistory[] }>(
-      endpoint,
-      { method: 'GET' }
-    )
-    return response.data
-  }
-
-  // Financial Analysis - Suppliers endpoints
-  async getSuppliers(filters?: any): Promise<Supplier[]> {
-    const params = new URLSearchParams()
-    if (filters?.search) params.append('search', filters.search)
-    if (filters?.isActive !== undefined) params.append('isActive', filters.isActive.toString())
-
-    const queryString = params.toString()
-    const response = await this.request<{ success: boolean; data: Supplier[] }>(
-      `/financial/suppliers${queryString ? `?${queryString}` : ''}`,
-      {
-        method: 'GET',
-        next: { revalidate: 300 } // 5 minutes cache
-      }
-    )
-    return response.data
-  }
-
-  async createSupplier(data: any): Promise<Supplier> {
-    const response = await this.request<{ success: boolean; data: Supplier }>(
-      '/financial/suppliers',
-      {
-        method: 'POST',
-        body: data,
-      }
-    )
-    return response.data
-  }
-
-  async updateSupplier(id: string, data: any): Promise<Supplier> {
-    const response = await this.request<{ success: boolean; data: Supplier }>(
-      `/financial/suppliers/${id}`,
-      {
-        method: 'PUT',
-        body: data,
-      }
-    )
-    return response.data
-  }
-
-  async deleteSupplier(id: string): Promise<void> {
-    await this.request<{ success: boolean }>(
-      `/financial/suppliers/${id}`,
-      { method: 'DELETE' }
-    )
-  }
 }
 
 // Create API client instance
@@ -537,11 +439,6 @@ export const queryKeys = {
   },
   customReports: {
     generate: (config: any) => ['custom-reports', 'generate', config] as const,
-  },
-  financial: {
-    costs: (filters?: any) => ['financial', 'costs', filters] as const,
-    costHistory: (productId?: string) => ['financial', 'costs', 'history', productId] as const,
-    suppliers: (filters?: any) => ['financial', 'suppliers', filters] as const,
   },
   health: () => ['health'] as const,
 } as const

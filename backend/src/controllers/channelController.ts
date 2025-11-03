@@ -3,6 +3,15 @@ import channelService from '../services/channelService';
 import { AppError } from '../middleware/errorHandler';
 
 export class ChannelController {
+  async getChannels(req: Request, res: Response, next: NextFunction) {
+    try {
+      const channels = await channelService.getChannels();
+      res.json(channels);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async getChannelPerformance(req: Request, res: Response, next: NextFunction) {
     try {
       const { startDate, endDate } = req.query;

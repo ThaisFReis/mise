@@ -1,6 +1,6 @@
 'use client'
 
-import { useDashboardMetrics, useTopProducts, useRevenueByHour, useRevenueByChannel } from '@/hooks/useApi'
+import { useDashboardMetrics, useTopProducts, useRevenueByHour, useRevenueByChannel, useStoreRankingReport } from '@/hooks/useApi'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useFilters } from '@/store'
 import { useMemo, useState, useEffect } from 'react'
@@ -19,8 +19,6 @@ export function DashboardOverview() {
   const apiFilters = useMemo(() => ({
     startDate: filters.dateRange.start,
     endDate: filters.dateRange.end,
-    storeId: filters.storeIds.length === 1 ? filters.storeIds[0] : undefined,
-    channelId: filters.channelIds.length === 1 ? filters.channelIds[0] : undefined,
   }), [filters])
 
   const { data: metricsRaw, isLoading: metricsLoading, error: metricsError } = useDashboardMetrics(apiFilters)
@@ -33,6 +31,11 @@ export function DashboardOverview() {
   const { data: hourlySalesData, isLoading: hourlySalesLoading, error: hourlySalesError } = useRevenueByHour(apiFilters)
 
   const { data: channelRevenueData, isLoading: channelRevenueLoading, error: channelRevenueError } = useRevenueByChannel(apiFilters)
+
+  const { data: topStoresRaw, isLoading: storesLoading, error: storesError } = useStoreRankingReport({
+    startDate: apiFilters.startDate,
+    endDate: apiFilters.endDate,
+  })
 
   // Calculate percentage changes from previous period
   const metrics = useMemo(() => {
@@ -63,6 +66,12 @@ export function DashboardOverview() {
       trendPercentage: product.trendPercentage || 0,
     }))
   }, [topProductsRaw])
+
+  // Get top 5 stores
+  const topStores = useMemo(() => {
+    if (!topStoresRaw) return null
+    return topStoresRaw.slice(0, 5)
+  }, [topStoresRaw])
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -99,15 +108,12 @@ export function DashboardOverview() {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in px-2">
+    <div className="space-y-6 animate-fade-in">
       {/* Metrics Cards */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <div className="metric-card group shadow-gray-soft">
           <div className="flex flex-row items-center justify-between space-y-0 pb-2">
             <h3 className="text-sm font-medium text-muted-foreground">Faturamento Total</h3>
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-              <span className="text-primary text-lg">R$</span>
-            </div>
           </div>
           <div>
             {metricsLoading ? (
@@ -130,9 +136,6 @@ export function DashboardOverview() {
         <div className="metric-card group shadow-gray-soft">
           <div className="flex flex-row items-center justify-between space-y-0 pb-2">
             <h3 className="text-sm font-medium text-muted-foreground">Total de Vendas</h3>
-            <div className="h-8 w-8 rounded-full bg-chart-2/10 flex items-center justify-center">
-              <span className="text-chart-2 text-lg">📊</span>
-            </div>
           </div>
           <div>
             {metricsLoading ? (
@@ -155,9 +158,6 @@ export function DashboardOverview() {
         <div className="metric-card group">
           <div className="flex flex-row items-center justify-between space-y-0 pb-2">
             <h3 className="text-sm font-medium text-muted-foreground">Ticket Médio</h3>
-            <div className="h-8 w-8 rounded-full bg-chart-3/10 flex items-center justify-center">
-              <span className="text-chart-3 text-lg">💰</span>
-            </div>
           </div>
           <div>
             {metricsLoading ? (
@@ -180,9 +180,6 @@ export function DashboardOverview() {
         <div className="metric-card group">
           <div className="flex flex-row items-center justify-between space-y-0 pb-2">
             <h3 className="text-sm font-medium text-muted-foreground">Taxa de Cancelamento</h3>
-            <div className="h-8 w-8 rounded-full bg-destructive/10 flex items-center justify-center">
-              <span className="text-destructive text-lg">⚠️</span>
-            </div>
           </div>
           <div>
             {metricsLoading ? (
@@ -213,58 +210,104 @@ export function DashboardOverview() {
           <HourlySalesChart data={hourlySalesData || []} />
         </ChartContainer>
         
-        <ChartContainer
-          title="Faturamento por Canal"
+        <ChannelRevenueChart
+          data={channelRevenueData || []}
           loading={channelRevenueLoading}
           error={channelRevenueError ? 'Erro ao carregar dados de faturamento por canal' : undefined}
-        >
-          <ChannelRevenueChart data={channelRevenueData || []} />
-        </ChartContainer>
+        />
       </div>
 
-      {/* Top Products */}
-      <div className="metric-card !scale-100">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold text-foreground">Top 5 Produtos Mais Vendidos</h3>
-          <span className="text-xs text-muted-foreground px-3 py-1 rounded-full bg-muted">Este período</span>
-        </div>
-        {productsLoading ? (
-          <div className="space-y-3">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <Skeleton key={i} className="h-16 w-full" />
-            ))}
+      {/* Top Products and Top Stores Row */}
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* Top Products */}
+        <div className="metric-card">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-lg font-semibold text-foreground">Top 5 Produtos Mais Vendidos</h3>
+            <span className="text-xs text-muted-foreground px-3 py-1 rounded-full bg-muted">Este período</span>
           </div>
-        ) : productsError ? (
-          <div className="text-sm text-destructive">Erro ao carregar produtos</div>
-        ) : topProducts && topProducts.length > 0 ? (
-          <div className="space-y-2">
-            {topProducts.map((product, index) => (
-              <div key={product.id || index} className="flex items-center justify-between p-4 rounded-lg bg-card hover:bg-muted transition duration-500 group hover:scale-105">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary font-bold text-sm">
-                    #{index + 1}
+          {productsLoading ? (
+            <div className="space-y-3">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <Skeleton key={i} className="h-16 w-full" />
+              ))}
+            </div>
+          ) : productsError ? (
+            <div className="text-sm text-destructive">Erro ao carregar produtos</div>
+          ) : topProducts && topProducts.length > 0 ? (
+            <div className="space-y-2">
+              {topProducts.map((product, index) => (
+                <div key={product.id || index} className="flex items-center justify-between p-4 rounded-lg bg-card hover:bg-muted transition duration-500 group hover:scale-105">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary font-bold text-sm">
+                      #{index + 1}
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground group-hover:text-primary transition-colors">{product.name}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {formatNumber(product.quantitySold)} vendidos • {product.category}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-medium text-foreground group-hover:text-primary transition-colors">{product.name}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {formatNumber(product.quantitySold)} vendidos • {product.category}
+                  <div className="text-right">
+                    <p className="font-semibold text-foreground">{formatCurrency(product.revenue)}</p>
+                    <p className={`text-xs font-medium ${product.trend === 'up' ? 'trend-up' : product.trend === 'down' ? 'trend-down' : 'trend-neutral'}`}>
+                      {product.trend === 'up' ? '↑' : product.trend === 'down' ? '↓' : '•'} {formatPercentage(product.trendPercentage || 0)}
                     </p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="font-semibold text-foreground">{formatCurrency(product.revenue)}</p>
-                  <p className={`text-xs font-medium ${product.trend === 'up' ? 'trend-up' : product.trend === 'down' ? 'trend-down' : 'trend-neutral'}`}>
-                    {product.trend === 'up' ? '↑' : product.trend === 'down' ? '↓' : '•'} {formatPercentage(product.trendPercentage || 0)}
-                  </p>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-sm text-muted-foreground">Nenhum produto encontrado para o período selecionado</p>
+            </div>
+          )}
+        </div>
+
+        {/* Top Stores */}
+        <div className="metric-card">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-lg font-semibold text-foreground">Top 5 Lojas com Maior Faturamento</h3>
+            <span className="text-xs text-muted-foreground px-3 py-1 rounded-full bg-muted">Este período</span>
+          </div>
+          {storesLoading ? (
+            <div className="space-y-3">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <Skeleton key={i} className="h-16 w-full" />
+              ))}
+            </div>
+          ) : storesError ? (
+            <div className="text-sm text-destructive">Erro ao carregar lojas</div>
+          ) : topStores && topStores.length > 0 ? (
+            <div className="space-y-2">
+              {topStores.map((store, index) => (
+                <div key={store.storeId} className="flex items-center justify-between p-4 rounded-lg bg-card hover:bg-muted transition duration-500 group hover:scale-105">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-chart-2/10 text-chart-2 font-bold text-sm">
+                      #{store.rank}
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground group-hover:text-chart-2 transition-colors">{store.storeName}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {formatNumber(store.orderCount)} pedidos • {store.city}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-semibold text-foreground">{formatCurrency(store.revenue)}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {store.percentOfTotal.toFixed(1)}% do total
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-8">
-            <p className="text-sm text-muted-foreground">Nenhum produto encontrado para o período selecionado</p>
-          </div>
-        )}
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-sm text-muted-foreground">Nenhuma loja encontrada para o período selecionado</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

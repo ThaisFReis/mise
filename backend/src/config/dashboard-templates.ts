@@ -8,7 +8,7 @@ export interface DashboardTemplate {
   id: string;
   name: string;
   description: string;
-  category: 'vendas' | 'financeiro' | 'operacional' | 'produtos' | 'clientes';
+  category: 'vendas' | 'operacional' | 'produtos' | 'clientes';
   icon: string;
   config: {
     widgets: WidgetConfig[];
@@ -43,106 +43,7 @@ export interface GridLayout {
 }
 
 export const DASHBOARD_TEMPLATES: DashboardTemplate[] = [
-  // === 1. VISÃO GERAL FINANCEIRA ===
-  {
-    id: 'financial-overview',
-    name: 'Visão Geral Financeira',
-    description: 'Dashboard completo com faturamento, lucro, custos e principais métricas financeiras',
-    category: 'financeiro',
-    icon: '💰',
-    config: {
-      widgets: [
-        // KPI Cards
-        {
-          id: 'kpi-revenue',
-          type: 'kpi',
-          title: 'Faturamento Total',
-          queryConfig: {
-            metrics: ['total_sales'],
-          },
-          visualizationConfig: {
-            type: 'kpi',
-            config: { icon: '💰', trend: true },
-          },
-        },
-        {
-          id: 'kpi-orders',
-          type: 'kpi',
-          title: 'Total de Pedidos',
-          queryConfig: {
-            metrics: ['order_count'],
-          },
-          visualizationConfig: {
-            type: 'kpi',
-            config: { icon: '📦', trend: true },
-          },
-        },
-        {
-          id: 'kpi-avg-ticket',
-          type: 'kpi',
-          title: 'Ticket Médio',
-          queryConfig: {
-            metrics: ['avg_ticket'],
-          },
-          visualizationConfig: {
-            type: 'kpi',
-            config: { icon: '🎫', trend: true },
-          },
-        },
-        {
-          id: 'kpi-discount-rate',
-          type: 'kpi',
-          title: 'Taxa de Desconto',
-          queryConfig: {
-            metrics: ['discount_rate'],
-          },
-          visualizationConfig: {
-            type: 'kpi',
-            config: { icon: '🏷️', trend: true },
-          },
-        },
-        // Revenue Trend
-        {
-          id: 'chart-revenue-trend',
-          type: 'chart',
-          title: 'Faturamento ao Longo do Tempo',
-          queryConfig: {
-            metrics: ['total_sales', 'order_count'],
-            dimensions: ['date_day'],
-            orderBy: [{ field: 'date_day', direction: 'ASC' }],
-          },
-          visualizationConfig: {
-            type: 'line',
-            config: { showGrid: true, showLegend: true },
-          },
-        },
-        // Revenue by Channel
-        {
-          id: 'chart-revenue-by-channel',
-          type: 'chart',
-          title: 'Faturamento por Canal',
-          queryConfig: {
-            metrics: ['total_sales'],
-            dimensions: ['channel'],
-            orderBy: [{ field: 'total_sales', direction: 'DESC' }],
-          },
-          visualizationConfig: {
-            type: 'bar',
-          },
-        },
-      ],
-      layout: [
-        { i: 'kpi-revenue', x: 0, y: 0, w: 3, h: 2 },
-        { i: 'kpi-orders', x: 3, y: 0, w: 3, h: 2 },
-        { i: 'kpi-avg-ticket', x: 6, y: 0, w: 3, h: 2 },
-        { i: 'kpi-discount-rate', x: 9, y: 0, w: 3, h: 2 },
-        { i: 'chart-revenue-trend', x: 0, y: 2, w: 8, h: 4 },
-        { i: 'chart-revenue-by-channel', x: 8, y: 2, w: 4, h: 4 },
-      ],
-    },
-  },
-
-  // === 2. PERFORMANCE DE VENDAS ===
+  // === 1. PERFORMANCE DE VENDAS ===
   {
     id: 'sales-performance',
     name: 'Performance de Vendas',
@@ -442,5 +343,5 @@ export function getTemplatesByCategory(category: string): DashboardTemplate[] {
  * Retorna lista de categorias
  */
 export function getTemplateCategories(): string[] {
-  return ['vendas', 'financeiro', 'operacional', 'produtos', 'clientes'];
+  return ['vendas', 'operacional', 'produtos', 'clientes'];
 }

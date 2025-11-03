@@ -1,15 +1,7 @@
 'use client'
 
 import { useFilters } from '@/store'
-import { useStores } from '@/hooks/useApi'
 import { Button } from '@/components/ui/button'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import {
   Popover,
   PopoverContent,
@@ -29,8 +21,7 @@ type DateRange = {
 }
 
 export function DashboardFilters() {
-  const { filters, setDateRange, setStores, resetFilters } = useFilters()
-  const { data: stores, isLoading: storesLoading } = useStores()
+  const { filters, setDateRange, resetFilters } = useFilters()
 
   const [mounted, setMounted] = useState(false)
   const [dateRange, setLocalDateRange] = useState<DateRange>({
@@ -98,14 +89,6 @@ export function DashboardFilters() {
         end: range.to.toISOString().split('T')[0],
       })
       setShowCalendar(false)
-    }
-  }
-
-  const handleStoreChange = (value: string) => {
-    if (value === 'all') {
-      setStores([])
-    } else {
-      setStores([value])
     }
   }
 
@@ -204,25 +187,6 @@ export function DashboardFilters() {
           </PopoverContent>
         </Popover>
       </div>
-
-      {/* Store Filter */}
-      <Select
-        value={filters.storeIds.length === 0 ? 'all' : filters.storeIds[0]}
-        onValueChange={handleStoreChange}
-        disabled={storesLoading}
-      >
-        <SelectTrigger className="w-[200px]">
-          <SelectValue placeholder="Selecionar loja" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">Todas as lojas</SelectItem>
-          {stores?.map((store) => (
-            <SelectItem key={store.id} value={store.id}>
-              {store.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
 
       {/* Reset Button */}
       <Button

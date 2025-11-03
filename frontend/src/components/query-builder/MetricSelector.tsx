@@ -5,6 +5,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Search } from 'lucide-react';
+import { HelpTooltip } from './HelpTooltip';
 
 interface Metric {
   id: string;
@@ -46,14 +47,24 @@ export function MetricSelector({ metrics, selected, onChange }: MetricSelectorPr
 
   return (
     <div className="space-y-4">
+      <div className="flex items-center gap-2 mb-2">
+        <HelpTooltip
+          title="O que são Métricas?"
+          content="Métricas são os valores que você quer medir. Por exemplo: quanto você vendeu (Total de Vendas), quantos pedidos teve (Pedidos), qual o valor médio por pedido (Ticket Médio)."
+        />
+        <p className="text-xs text-muted-foreground">
+          Escolha o que você quer medir
+        </p>
+      </div>
+
       {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
         <Input
-          placeholder="Buscar métricas..."
+          placeholder="Buscar..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="pl-10"
+          className="pl-9 h-10 text-sm rounded-lg transition-all duration-300"
         />
       </div>
 
@@ -61,19 +72,19 @@ export function MetricSelector({ metrics, selected, onChange }: MetricSelectorPr
       <div className="flex flex-wrap gap-2">
         <Badge
           variant={selectedCategory === null ? "default" : "outline"}
-          className="cursor-pointer"
+          className="cursor-pointer text-xs py-1 px-3 bg-primary hover:bg-primary/90 transition-all duration-300"
           onClick={() => setSelectedCategory(null)}
         >
-          Todas ({metrics.length})
+          Todas
         </Badge>
         {categories.map(category => (
           <Badge
             key={category}
             variant={selectedCategory === category ? "default" : "outline"}
-            className="cursor-pointer"
+            className="cursor-pointer text-xs py-1 px-3 bg-primary hover:bg-primary/90 transition-all duration-300"
             onClick={() => setSelectedCategory(category)}
           >
-            {category} ({metrics.filter(m => m.category === category).length})
+            {category}
           </Badge>
         ))}
       </div>
@@ -81,7 +92,7 @@ export function MetricSelector({ metrics, selected, onChange }: MetricSelectorPr
       {/* Metrics List */}
       <div className="space-y-2 max-h-96 overflow-y-auto">
         {filteredMetrics.length === 0 && (
-          <p className="text-sm text-gray-400 text-center py-4">
+          <p className="text-sm text-muted-foreground text-center py-8">
             Nenhuma métrica encontrada
           </p>
         )}
@@ -89,23 +100,21 @@ export function MetricSelector({ metrics, selected, onChange }: MetricSelectorPr
         {filteredMetrics.map(metric => (
           <div
             key={metric.id}
-            className="flex items-start gap-3 p-3 rounded-lg border hover:bg-gray-50 cursor-pointer transition-colors"
+            className="flex items-start gap-3 p-3 rounded-lg border border-border hover:border-primary/50 hover:bg-accent cursor-pointer transition-all duration-300"
             onClick={() => handleToggle(metric.id)}
           >
             <Checkbox
               checked={selected.includes(metric.id)}
               onCheckedChange={() => handleToggle(metric.id)}
               onClick={(e) => e.stopPropagation()}
+              className="mt-0.5"
             />
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                {metric.icon && <span>{metric.icon}</span>}
-                <p className="font-medium text-sm">{metric.name}</p>
-              </div>
-              <p className="text-xs text-gray-500 mt-1">{metric.description}</p>
-              <Badge variant="secondary" className="mt-1 text-xs">
+              <p className="font-medium text-sm text-foreground">{metric.name}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{metric.description}</p>
+              <span className="inline-block mt-2 text-xs text-muted-foreground bg-accent px-2 py-0.5 rounded">
                 {metric.format}
-              </Badge>
+              </span>
             </div>
           </div>
         ))}

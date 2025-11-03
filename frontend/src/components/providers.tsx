@@ -1,7 +1,6 @@
 'use client'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { ThemeProvider } from 'next-themes'
 
 function makeQueryClient() {
@@ -63,9 +62,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
         disableTransitionOnChange
       >
         {children}
-        <ReactQueryDevtools
-          initialIsOpen={false}
-        />
       </ThemeProvider>
     </QueryClientProvider>
   )

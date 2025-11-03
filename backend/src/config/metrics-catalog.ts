@@ -6,7 +6,7 @@
  */
 
 export type MetricFormat = 'currency' | 'number' | 'percentage' | 'duration';
-export type MetricCategory = 'Vendas' | 'Financeiro' | 'Operacional' | 'Cliente' | 'Produto';
+export type MetricCategory = 'Vendas' | 'Operacional' | 'Cliente' | 'Produto';
 
 export interface Metric {
   id: string;
@@ -78,14 +78,14 @@ export const METRICS_CATALOG: Metric[] = [
     icon: '🛒',
   },
 
-  // === FINANCEIRO ===
+  // === DESCONTOS E TAXAS ===
   {
     id: 'total_discount',
     name: 'Total de Descontos',
     description: 'Soma de todos os descontos aplicados',
     sql: 'SUM(s.total_discount)',
     format: 'currency',
-    category: 'Financeiro',
+    category: 'Vendas',
     icon: '🏷️',
   },
   {
@@ -94,7 +94,7 @@ export const METRICS_CATALOG: Metric[] = [
     description: 'Percentual médio de desconto aplicado',
     sql: '(SUM(s.total_discount) * 100.0 / NULLIF(SUM(s.total_amount + s.total_discount), 0))',
     format: 'percentage',
-    category: 'Financeiro',
+    category: 'Vendas',
     icon: '📉',
   },
   {
@@ -103,7 +103,7 @@ export const METRICS_CATALOG: Metric[] = [
     description: 'Soma de todas as taxas de entrega cobradas',
     sql: 'SUM(s.delivery_fee)',
     format: 'currency',
-    category: 'Financeiro',
+    category: 'Vendas',
     icon: '🚚',
   },
   {
@@ -112,7 +112,7 @@ export const METRICS_CATALOG: Metric[] = [
     description: 'Soma de todas as taxas de serviço',
     sql: 'SUM(s.service_tax_fee)',
     format: 'currency',
-    category: 'Financeiro',
+    category: 'Vendas',
     icon: '🧾',
   },
   {
@@ -121,7 +121,7 @@ export const METRICS_CATALOG: Metric[] = [
     description: 'Margem percentual média (requer dados de custo)',
     sql: 'AVG(((s.total_amount - COALESCE(s.total_discount, 0)) * 100.0) / NULLIF(s.total_amount, 0))',
     format: 'percentage',
-    category: 'Financeiro',
+    category: 'Vendas',
     icon: '📈',
   },
 
@@ -214,5 +214,5 @@ export function getMetricsByCategory(category: MetricCategory): Metric[] {
  * Retorna todas as categorias disponíveis
  */
 export function getCategories(): MetricCategory[] {
-  return ['Vendas', 'Financeiro', 'Operacional', 'Cliente', 'Produto'];
+  return ['Vendas', 'Operacional', 'Cliente', 'Produto'];
 }

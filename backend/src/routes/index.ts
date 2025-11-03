@@ -7,7 +7,6 @@ import categoryRoutes from './categories';
 import insightsRoutes from './insights';
 import reportsRoutes from './reports';
 import customReportsRoutes from './customReports';
-import financialRoutes from './financial.routes';
 import queryBuilderRoutes from './queryBuilder';
 import savedDashboardsRoutes from './dashboards';
 
@@ -21,9 +20,6 @@ router.use('/categories', categoryRoutes);
 router.use('/insights', insightsRoutes);
 router.use('/reports', reportsRoutes);
 router.use('/custom-reports', customReportsRoutes);
-
-// Phase 1: Financial Analysis routes
-router.use('/', financialRoutes);
 
 // Custom Dashboards: Query Builder routes
 router.use('/query-builder', queryBuilderRoutes);

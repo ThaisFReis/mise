@@ -57,18 +57,21 @@ class QueryBuilderService {
   async executeQuery(config: QueryConfig): Promise<QueryResult> {
     const startTime = Date.now();
 
+    console.log('[QueryBuilder] Executing query with config:', JSON.stringify(config, null, 2));
+
     // Validar configuração
     this.validateConfig(config);
 
     // Tentar buscar do cache
     const cacheKey = this.generateCacheKey(config);
-    const cachedResult = await RedisService.get(cacheKey);
+    const cachedResult = await RedisService.get<QueryResult>(cacheKey);
 
     if (cachedResult) {
+      console.log('[QueryBuilder] Cache hit for key:', cacheKey);
       return {
-        ...JSON.parse(cachedResult),
+        ...cachedResult,
         metadata: {
-          ...JSON.parse(cachedResult).metadata,
+          ...cachedResult.metadata,
           cacheHit: true,
         },
       };
@@ -78,28 +81,38 @@ class QueryBuilderService {
     const sql = this.buildSQL(config);
     console.log('[QueryBuilder] Executing SQL:', sql);
 
-    const data = await prisma.$queryRawUnsafe(sql);
+    const rawData = await prisma.$queryRawUnsafe(sql);
+
+    // Convert BigInt and numeric strings to Number for JSON serialization
+    const data = Array.isArray(rawData)
+      ? rawData.map(row => this.convertBigIntToNumber(row))
+      : [];
 
     // Se comparação está habilitada, executar query de comparação
     let comparisonData: any[] | undefined;
     if (config.comparison?.enabled) {
       const comparisonSQL = this.buildComparisonSQL(config);
       console.log('[QueryBuilder] Executing Comparison SQL:', comparisonSQL);
-      comparisonData = await prisma.$queryRawUnsafe(comparisonSQL);
+      const rawComparison = await prisma.$queryRawUnsafe(comparisonSQL);
+      comparisonData = Array.isArray(rawComparison)
+        ? rawComparison.map(row => this.convertBigIntToNumber(row))
+        : undefined;
     }
 
     const result: QueryResult = {
-      data: Array.isArray(data) ? data : [],
+      data,
       comparisonData,
       metadata: {
         executionTime: Date.now() - startTime,
-        rowCount: Array.isArray(data) ? data.length : 0,
+        rowCount: data.length,
         cacheHit: false,
       },
     };
 
+    console.log('[QueryBuilder] Query executed successfully. Rows returned:', result.metadata.rowCount);
+
     // Salvar no cache
-    await RedisService.set(cacheKey, JSON.stringify(result), this.CACHE_TTL);
+    await RedisService.set(cacheKey, result, this.CACHE_TTL);
 
     return result;
   }
@@ -149,10 +162,30 @@ class QueryBuilderService {
     // Determinar quais tabelas precisam ser joinadas
     const requiredJoins = this.determineRequiredJoins(selectedMetrics, selectedDimensions);
 
+    // CORREÇÃO 1: Adicionar filtro de data padrão se nenhum filtro foi fornecido
+    let filters = config.filters || [];
+    if (filters.length === 0) {
+      // Default: últimos 30 dias
+      const endDate = new Date();
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - 30);
+
+      filters = [{
+        field: 'created_at',
+        operator: 'BETWEEN' as FilterOperator,
+        value: [startDate.toISOString(), endDate.toISOString()],
+      }];
+
+      console.log('[QueryBuilder] No filters provided. Using default 30-day filter:', {
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+      });
+    }
+
     // Construir partes da query
     const selectClause = this.buildSelectClause(selectedMetrics, selectedDimensions);
     const fromClause = this.buildFromClause(requiredJoins);
-    const whereClause = this.buildWhereClause(config.filters || []);
+    const whereClause = this.buildWhereClause(filters);
     const groupByClause = this.buildGroupByClause(selectedDimensions);
     const orderByClause = this.buildOrderByClause(config.orderBy || [], selectedDimensions);
     const limitClause = config.limit ? `LIMIT ${config.limit}` : '';
@@ -286,7 +319,7 @@ class QueryBuilderService {
   private buildGroupByClause(dimensions: Dimension[]): string {
     if (dimensions.length === 0) return '';
 
-    const groupFields = dimensions.map((dim, idx) => `${idx + 1}`);
+    const groupFields = dimensions.map((_, idx) => `${idx + 1}`);
     return `GROUP BY ${groupFields.join(', ')}`;
   }
 
@@ -332,6 +365,40 @@ class QueryBuilderService {
     }
 
     return joins;
+  }
+
+  /**
+   * Convert BigInt and numeric strings to Number for JSON serialization
+   */
+  private convertBigIntToNumber(obj: any): any {
+    if (obj === null || obj === undefined) return obj;
+
+    if (typeof obj === 'bigint') {
+      return Number(obj);
+    }
+
+    // Convert numeric strings to numbers (e.g., "123.45" -> 123.45)
+    if (typeof obj === 'string') {
+      const num = Number(obj);
+      if (!isNaN(num) && obj.trim() !== '') {
+        return num;
+      }
+      return obj; // Keep as string if not numeric
+    }
+
+    if (Array.isArray(obj)) {
+      return obj.map(item => this.convertBigIntToNumber(item));
+    }
+
+    if (typeof obj === 'object') {
+      const converted: any = {};
+      for (const key in obj) {
+        converted[key] = this.convertBigIntToNumber(obj[key]);
+      }
+      return converted;
+    }
+
+    return obj;
   }
 
   /**

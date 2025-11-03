@@ -168,134 +168,139 @@ export function ProductFilters({
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-3 p-4 bg-card rounded-lg border border-border shadow-sm">
-      <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-        <Filter className="h-4 w-4" />
-        <span>Filtros:</span>
+    <div className="p-4 bg-card rounded-lg border border-border shadow-sm space-y-4">
+      {/* Header with title and reset button */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+          <Filter className="h-4 w-4" />
+          <span>Filtros:</span>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleReset}
+        >
+          <RotateCcw className="h-4 w-4" />
+          Limpar filtros
+        </Button>
       </div>
 
-      {/* Period Filter */}
-      <div className="flex items-center gap-2">
-        <div className="flex rounded-md overflow-hidden border border-border">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleQuickDateRange('today')}
-            className="rounded-none border-r border-border hover:bg-muted"
-          >
-            Hoje
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleQuickDateRange('7days')}
-            className="rounded-none border-r border-border hover:bg-muted"
-          >
-            7 dias
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleQuickDateRange('30days')}
-            className="rounded-none hover:bg-muted"
-          >
-            30 dias
-          </Button>
+      {/* Filters Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+        {/* Period Filter */}
+        <div className="col-span-1 md:col-span-2 lg:col-span-2 xl:col-span-2 flex flex-col gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="flex rounded-md overflow-hidden border border-border">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleQuickDateRange('today')}
+                className="rounded-none border-r border-border hover:bg-muted"
+              >
+                Hoje
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleQuickDateRange('7days')}
+                className="rounded-none border-r border-border hover:bg-muted"
+              >
+                7 dias
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleQuickDateRange('30days')}
+                className="rounded-none hover:bg-muted"
+              >
+                30 dias
+              </Button>
+            </div>
+
+            <Popover open={showCalendar} onOpenChange={setShowCalendar}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    'justify-start text-left font-normal flex-1 min-w-[200px]',
+                    !dateRange && 'text-muted-foreground'
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {getDateRangeText()}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="range"
+                  defaultMonth={dateRange?.from}
+                  selected={dateRange}
+                  onSelect={handleCustomDateRange}
+                  numberOfMonths={2}
+                  locale={ptBR}
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
         </div>
 
-        <Popover open={showCalendar} onOpenChange={setShowCalendar}>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              className={cn(
-                'justify-start text-left font-normal min-w-[240px]',
-                !dateRange && 'text-muted-foreground'
-              )}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {getDateRangeText()}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="range"
-              defaultMonth={dateRange?.from}
-              selected={dateRange}
-              onSelect={handleCustomDateRange}
-              numberOfMonths={2}
-              locale={ptBR}
-            />
-          </PopoverContent>
-        </Popover>
+        {/* Category Filter */}
+        <Select
+          value={categoryId || 'all'}
+          onValueChange={handleCategoryChange}
+          disabled={categoriesLoading}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Categoria" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todas as categorias</SelectItem>
+            {categories?.map((category) => (
+              <SelectItem key={category.id} value={String(category.id)}>
+                {category.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        {/* Channel Filter */}
+        <Select
+          value={channelId || 'all'}
+          onValueChange={handleChannelChange}
+          disabled={channelsLoading}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Canal" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos os canais</SelectItem>
+            {channels?.map((channel) => (
+              <SelectItem key={channel.id} value={channel.id}>
+                {channel.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        {/* Store Filter */}
+        <Select
+          value={filters.storeIds.length === 0 ? 'all' : filters.storeIds[0]}
+          onValueChange={handleStoreChange}
+          disabled={storesLoading}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Loja" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todas as lojas</SelectItem>
+            {stores?.map((store) => (
+              <SelectItem key={store.id} value={store.id}>
+                {store.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
-
-      {/* Category Filter */}
-      <Select
-        value={categoryId || 'all'}
-        onValueChange={handleCategoryChange}
-        disabled={categoriesLoading}
-      >
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Categoria" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">Todas as categorias</SelectItem>
-          {categories?.map((category) => (
-            <SelectItem key={category.id} value={String(category.id)}>
-              {category.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-
-      {/* Channel Filter */}
-      <Select
-        value={channelId || 'all'}
-        onValueChange={handleChannelChange}
-        disabled={channelsLoading}
-      >
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Canal" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">Todos os canais</SelectItem>
-          {channels?.map((channel) => (
-            <SelectItem key={channel.id} value={channel.id}>
-              {channel.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-
-      {/* Store Filter */}
-      <Select
-        value={filters.storeIds.length === 0 ? 'all' : filters.storeIds[0]}
-        onValueChange={handleStoreChange}
-        disabled={storesLoading}
-      >
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Loja" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">Todas as lojas</SelectItem>
-          {stores?.map((store) => (
-            <SelectItem key={store.id} value={store.id}>
-              {store.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-
-      {/* Reset Button */}
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={handleReset}
-        className="ml-auto"
-      >
-        <RotateCcw className="h-4 w-4 mr-2" />
-        Limpar filtros
-      </Button>
     </div>
   )
 }
