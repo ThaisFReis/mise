@@ -26,7 +26,7 @@ router.use('/query-builder', queryBuilderRoutes);
 router.use('/dashboards', savedDashboardsRoutes);
 
 // Health check
-router.get('/health', (req, res) => {
+router.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
