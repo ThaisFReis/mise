@@ -22,7 +22,7 @@ export class StoreController {
     }
   }
 
-  async getStores(req: Request, res: Response, next: NextFunction) {
+  async getStores(_req: Request, res: Response, next: NextFunction) {
     try {
       const stores = await storeService.getStores();
       res.json(stores);
