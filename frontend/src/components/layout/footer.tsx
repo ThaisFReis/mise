@@ -18,7 +18,7 @@ export function Footer() {
   const usefulLinks = [
     { name: 'Sobre', href: '#' },
     { name: 'FAQ', href: '/dashboard/faq' },
-    { name: 'Documentação', href: '#' },
+    { name: 'Documentação', href: '/docs' },
   ]
 
   return (

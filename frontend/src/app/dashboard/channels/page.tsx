@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { useFilters } from '@/store'
 import {
   useChannelPerformance,
@@ -16,9 +16,16 @@ import { ChannelTopProducts } from '@/components/dashboard/channel-top-products'
 import { ChannelPeakHours } from '@/components/dashboard/channel-peak-hours'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Loader2 } from 'lucide-react'
+import { DashboardFilters } from '@/components/dashboard/filters'
+import { DashboardSkeleton } from '@/components/ui/skeletons'
 
 export default function ChannelsPage() {
   const { filters } = useFilters()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const dateFilters = useMemo(
     () => ({
@@ -61,32 +68,8 @@ export default function ChannelsPage() {
   const hasError =
     performanceError || topProductsError || peakHoursError || timelineError
 
-  if (isLoading) {
-    return (
-      <div className="flex-1 flex items-center justify-center min-h-screen">
-        <div className="flex flex-col items-center gap-2">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-sm text-muted-foreground">Carregando dados dos canais...</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (hasError) {
-    return (
-      <div className="flex-1 flex items-center justify-center min-h-screen">
-        <Card className="max-w-md">
-          <CardHeader>
-            <CardTitle>Erro ao carregar dados</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">
-              Ocorreu um erro ao carregar os dados dos canais. Por favor, tente novamente.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    )
+  if (!mounted) {
+    return <DashboardSkeleton />
   }
 
   return (
@@ -100,6 +83,8 @@ export default function ChannelsPage() {
           </p>
         </div>
       </div>
+      
+      <DashboardFilters />
 
       {/* Metrics Cards */}
       {performanceData && <ChannelMetricsCards data={performanceData} />}

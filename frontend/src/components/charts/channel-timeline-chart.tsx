@@ -10,17 +10,17 @@ interface ChannelTimelineChartProps {
 }
 
 const COLORS = [
-  'hsl(var(--color-chart-1))',
-  'hsl(var(--color-chart-2))',
-  'hsl(var(--color-chart-3))',
-  'hsl(var(--color-chart-4))',
-  'hsl(var(--color-chart-5))',
+  'var(--chart-1)',
+  'var(--chart-2)',
+  'var(--chart-3)',
+  'var(--chart-4)',
+  'var(--chart-5)',
 ]
 
 export function ChannelTimelineChart({ data }: ChannelTimelineChartProps) {
   // Transform data to have dates as keys and channels as values
   const channelNames = Array.from(new Set(data.map((d) => d.channelName)))
-  const dates = Array.from(new Set(data.map((d) => d.date))).sort()
+  const dates = Array.from(new Set(data.map((d) => d.date))).filter(d => d).sort()
 
   const chartData = dates.map((date) => {
     const entry: any = { date }
@@ -50,10 +50,16 @@ export function ChannelTimelineChart({ data }: ChannelTimelineChartProps) {
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
+      let formattedLabel = label;
+      try {
+        formattedLabel = format(parseISO(label), 'dd/MM/yyyy', { locale: ptBR });
+      } catch (e) {
+        // Keep original label if parsing fails
+      }
       return (
         <div className="rounded-lg border bg-background p-3 shadow-md">
           <p className="font-semibold text-foreground mb-2">
-            {format(parseISO(label), 'dd/MM/yyyy', { locale: ptBR })}
+            {formattedLabel}
           </p>
           {payload.map((entry: any, index: number) => (
             <p key={index} className="text-sm text-muted-foreground">
@@ -74,12 +80,12 @@ export function ChannelTimelineChart({ data }: ChannelTimelineChartProps) {
         <XAxis
           dataKey="date"
           className="text-xs"
-          tick={{ fill: 'hsl(var(--muted-foreground))' }}
+          tick={{ fill: 'var(--muted-foreground))' }}
           tickFormatter={formatDate}
         />
         <YAxis
           className="text-xs"
-          tick={{ fill: 'hsl(var(--muted-foreground))' }}
+          tick={{ fill: 'var(--muted-foreground))' }}
           tickFormatter={formatCurrency}
         />
         <Tooltip content={<CustomTooltip />} />

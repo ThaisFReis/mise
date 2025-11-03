@@ -249,15 +249,6 @@ export default function HomePage() {
                   Começar Agora
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
-
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="px-12 py-6 text-lg font-semibold rounded-xl border-2 hover:bg-primary/5 transition-all duration-300"
-                  onClick={() => window.location.href = '/dashboard/query-builder'}
-                >
-                  Explorar Funcionalidades
-                </Button>
               </div>
             </div>
 

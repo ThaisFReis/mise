@@ -53,20 +53,20 @@ export function ChannelComparisonChart({ data }: ChannelComparisonChartProps) {
         <XAxis
           dataKey="name"
           className="text-xs"
-          tick={{ fill: 'hsl(var(--muted-foreground))' }}
+          tick={{ fill: 'var(--muted-foreground))' }}
         />
         <YAxis
           yAxisId="left"
           orientation="left"
           className="text-xs"
-          tick={{ fill: 'hsl(var(--muted-foreground))' }}
+          tick={{ fill: 'var(--muted-foreground))' }}
           tickFormatter={formatCurrency}
         />
         <YAxis
           yAxisId="right"
           orientation="right"
           className="text-xs"
-          tick={{ fill: 'hsl(var(--muted-foreground))' }}
+          tick={{ fill: 'var(--muted-foreground))' }}
           tickFormatter={formatNumber}
         />
         <Tooltip content={<CustomTooltip />} />
@@ -77,13 +77,13 @@ export function ChannelComparisonChart({ data }: ChannelComparisonChartProps) {
         <Bar
           yAxisId="left"
           dataKey="Ticket Médio"
-          fill="hsl(var(--color-chart-1))"
+          fill="var(--color-chart-1)"
           radius={[8, 8, 0, 0]}
         />
         <Bar
           yAxisId="right"
           dataKey="Pedidos"
-          fill="hsl(var(--color-chart-2))"
+          fill="var(--color-chart-2)"
           radius={[8, 8, 0, 0]}
         />
       </BarChart>

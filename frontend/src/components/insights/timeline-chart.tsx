@@ -112,8 +112,8 @@ export function TimelineChart({ data, granularity, onGranularityChange, loading 
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: 'hsl(var(--background))',
-                border: '1px solid hsl(var(--border))',
+                backgroundColor: 'var(--background))',
+                border: '1px solid var(--border))',
                 borderRadius: '8px',
               }}
               formatter={(value: number) => [formatCurrency(value), 'Faturamento']}
@@ -121,9 +121,9 @@ export function TimelineChart({ data, granularity, onGranularityChange, loading 
             <Line
               type="monotone"
               dataKey="Faturamento"
-              stroke="hsl(var(--primary))"
+              stroke="var(--primary))"
               strokeWidth={2}
-              dot={{ fill: 'hsl(var(--primary))' }}
+              dot={{ fill: 'var(--primary))' }}
             />
           </LineChart>
         </ResponsiveContainer>
@@ -146,8 +146,8 @@ export function TimelineChart({ data, granularity, onGranularityChange, loading 
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: 'hsl(var(--background))',
-                border: '1px solid hsl(var(--border))',
+                backgroundColor: 'var(--background))',
+                border: '1px solid var(--border))',
                 borderRadius: '8px',
               }}
               formatter={(value: number) => [Math.round(value), 'Pedidos']}
@@ -155,9 +155,9 @@ export function TimelineChart({ data, granularity, onGranularityChange, loading 
             <Line
               type="monotone"
               dataKey="Pedidos"
-              stroke="hsl(var(--chart-2))"
+              stroke="var(--chart-2))"
               strokeWidth={2}
-              dot={{ fill: 'hsl(var(--chart-2))' }}
+              dot={{ fill: 'var(--chart-2))' }}
             />
           </LineChart>
         </ResponsiveContainer>
@@ -181,8 +181,8 @@ export function TimelineChart({ data, granularity, onGranularityChange, loading 
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: 'hsl(var(--background))',
-                border: '1px solid hsl(var(--border))',
+                backgroundColor: 'var(--background))',
+                border: '1px solid var(--border))',
                 borderRadius: '8px',
               }}
               formatter={(value: number) => [formatCurrency(value), 'Ticket Médio']}
@@ -190,9 +190,9 @@ export function TimelineChart({ data, granularity, onGranularityChange, loading 
             <Line
               type="monotone"
               dataKey="Ticket Médio"
-              stroke="hsl(var(--chart-3))"
+              stroke="var(--chart-3))"
               strokeWidth={2}
-              dot={{ fill: 'hsl(var(--chart-3))' }}
+              dot={{ fill: 'var(--chart-3))' }}
             />
           </LineChart>
         </ResponsiveContainer>

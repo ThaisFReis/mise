@@ -8,11 +8,11 @@ interface ChannelDistributionChartProps {
 }
 
 const COLORS = [
-  'hsl(var(--color-chart-1))',
-  'hsl(var(--color-chart-2))',
-  'hsl(var(--color-chart-3))',
-  'hsl(var(--color-chart-4))',
-  'hsl(var(--color-chart-5))',
+  'var(--color-chart-1)',
+  'var(--color-chart-2)',
+  'var(--color-chart-3)',
+  'var(--color-chart-4)',
+  'var(--color-chart-5)',
 ]
 
 export function ChannelDistributionChart({ data }: ChannelDistributionChartProps) {

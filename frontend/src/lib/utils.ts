@@ -144,9 +144,9 @@ export function getTrendColor(direction: 'up' | 'down' | 'neutral'): string {
 // Get color for chart data
 export function getChartColors(count: number): string[] {
   const colors = [
-    'hsl(var(--primary))',
-    'hsl(var(--secondary))',
-    'hsl(var(--accent))',
+    'var(--primary))',
+    'var(--secondary))',
+    'var(--accent))',
     '#8884d8',
     '#82ca9d',
     '#ffc658',
