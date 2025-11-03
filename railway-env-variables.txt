@@ -5,7 +5,9 @@
 DATABASE_URL=${{Postgres.DATABASE_URL}}
 
 # Redis Connection (Reference Redis service)
+# Try REDIS_URL first, if authentication fails, use REDIS_PRIVATE_URL
 REDIS_URL=${{Redis.REDIS_URL}}
+# Alternative: REDIS_URL=${{Redis.REDIS_PRIVATE_URL}}
 
 # Server Configuration
 PORT=3001
