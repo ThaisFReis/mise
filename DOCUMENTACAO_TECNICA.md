@@ -338,7 +338,7 @@ frontend/src/
 
 ### 2.4 Decisões Arquiteturais
 
-#### 2.4.1 Por que Arquitetura em Camadas?
+#### 2.4.1 Por que Arquitetura em Camadas?_
 
 **Decisão:** Separar frontend, API, serviços e dados em camadas distintas.
 
@@ -353,7 +353,7 @@ frontend/src/
 - ✅ Código organizado e fácil de navegar
 - ✅ Onboarding de novos devs mais rápido
 
-#### 2.4.2 Por que Query Builder ao invés de SQL Direto?
+#### 2.4.2 Por que Query Builder ao invés de SQL Direto?_
 
 **Decisão:** Criar abstração que permite usuários construírem análises sem SQL.
 
@@ -374,7 +374,7 @@ frontend/src/
 - ✅ 100% seguro contra injection
 - ✅ UX infinitamente superior para não-técnicos
 
-#### 2.4.3 Por que Prisma ORM?
+#### 2.4.3 Por que Prisma ORM?_
 
 **Decisão:** Usar Prisma como layer de acesso a dados.
 
@@ -395,7 +395,7 @@ frontend/src/
 - ✅ Produtividade 3x maior após onboarding
 - ✅ Menos bugs em runtime
 
-#### 2.4.4 Por que Redis para Cache?
+#### 2.4.4 Por que Redis para Cache?_
 
 **Decisão:** Implementar camada de cache Redis com ioredis.
 
@@ -417,7 +417,7 @@ frontend/src/
 - ✅ Latência reduzida de 500ms → 50ms
 - ✅ Escala para múltiplos usuários simultâneos
 
-#### 2.4.5 Por que Next.js 15 App Router?
+#### 2.4.5 Por que Next.js 15 App Router?_
 
 **Decisão:** Usar Next.js 15 com App Router ao invés de Pages Router ou outro framework.
 
@@ -433,7 +433,7 @@ frontend/src/
 - ✅ Performance superior (streaming, suspense)
 - ✅ Developer experience excepcional
 
-#### 2.4.6 Por que 18 Services Separados?
+#### 2.4.6 Por que 18 Services Separados?_
 
 **Decisão:** Quebrar lógica de negócio em 18 services especializados.
 
@@ -1926,9 +1926,9 @@ model AuditLog {
 
 ---
 
-## 9. Guia de Instala��o e Deploy
+## 9. Guia de Instalação e Deploy
 
-### 9.1 Pré-requisitos
+### 9.1 Pré-requisitos_
 
 **Software necessário**:
 - Node.js 20.x ou superior
@@ -1937,7 +1937,7 @@ model AuditLog {
 - 4GB RAM mínimo (8GB recomendado)
 - 2GB espaço em disco
 
-### 9.2 Setup Local com Docker
+### 9.2 Setup Local com Docker_
 
 #### 9.2.1 Clone do Repositório
 
