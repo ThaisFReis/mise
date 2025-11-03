@@ -9,6 +9,7 @@ import {
   TrendingUp,
   Store,
   Lightbulb,
+  FileText,
   ChevronRight,
   Sparkles,
   Clock,
@@ -49,7 +50,7 @@ function FeatureCard({ title, description, icon: Icon, href, features, gradient 
   return (
     <Card
       onClick={() => router.push(href)}
-      className="group p-6 border-2 border-border hover:border-primary/50 transition-all duration-300 cursor-pointer hover:shadow-lg hover:scale-105"
+      className="group p-6 border-2 border-border hover:border-primary/50 transition-all duration-300 cursor-pointer hover:scale-105"
     >
       <div className={`w-12 h-12 rounded-xl ${gradient} flex items-center justify-center mb-4`}>
         <Icon className="w-6 h-6 text-white" />
@@ -163,7 +164,7 @@ export default function HomePage() {
         'Comparação entre períodos',
         '6+ relatórios rápidos'
       ]
-    }
+    },
   ];
 
   const quickStats = [
@@ -242,7 +243,7 @@ export default function HomePage() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center">
                 <Button
                   size="lg"
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-12 py-6 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-12 py-6 text-lg font-semibold rounded-xl transition-all duration-300 transform hover:scale-105"
                   onClick={() => window.location.href = '/dashboard'}
                 >
                   Começar Agora
@@ -276,7 +277,7 @@ export default function HomePage() {
           </div>
 
           {/* Scroll Indicator */}
-          <div className="absolute -bottom-5 left-1/2 lex flex-col items-center gap-2">
+          <div className="absolute bottom-0 left-1/2 lex flex-col items-center gap-2">
             <div className="animate-bounce-vertical">
               <ChevronDown className="w-6 h-6 text-primary" />
             </div>

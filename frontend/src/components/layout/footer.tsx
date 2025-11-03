@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ChartPie, Github, Linkedin, Twitter, Mail, ExternalLink } from 'lucide-react'
+import { ChartPie, Mail, ExternalLink, Github } from 'lucide-react'
 
 export function Footer() {
   const currentYear = new Date().getFullYear()
@@ -17,18 +17,8 @@ export function Footer() {
 
   const usefulLinks = [
     { name: 'Sobre', href: '#' },
-    { name: 'Suporte', href: '#' },
     { name: 'FAQ', href: '/dashboard/faq' },
     { name: 'Documentação', href: '#' },
-    { name: 'Política de Privacidade', href: '#' },
-    { name: 'Termos de Uso', href: '#' },
-  ]
-
-  const socialLinks = [
-    { name: 'GitHub', href: 'https://github.com/ThaisFReis', icon: Github, ariaLabel: 'Visite nosso GitHub' },
-    { name: 'LinkedIn', href: 'https://linkedin.com', icon: Linkedin, ariaLabel: 'Conecte-se no LinkedIn' },
-    { name: 'Twitter', href: 'https://twitter.com', icon: Twitter, ariaLabel: 'Siga-nos no Twitter' },
-    { name: 'Email', href: 'mailto:contato@mise.app', icon: Mail, ariaLabel: 'Envie um email' },
   ]
 
   return (
@@ -49,24 +39,6 @@ export function Footer() {
               Plataforma completa de analytics para operações de restaurantes.
               Transforme dados em insights acionáveis.
             </p>
-            <div className="flex gap-3">
-              {socialLinks.map((social) => {
-                const Icon = social.icon
-                return (
-                  <a
-                    key={social.name}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="h-9 w-9 rounded-full bg-muted hover:bg-primary hover:text-white flex items-center justify-center transition-all duration-200 shadow-gray-soft hover:shadow-lg hover:scale-110"
-                    aria-label={social.ariaLabel}
-                    title={social.name}
-                  >
-                    <Icon className="h-4 w-4" aria-hidden="true" />
-                  </a>
-                )
-              })}
-            </div>
           </div>
 
           {/* Navigation Links */}
@@ -115,15 +87,18 @@ export function Footer() {
               Fique por Dentro
             </h3>
             <p className="text-sm text-muted-foreground">
-              Receba as últimas atualizações e novidades sobre analytics de restaurantes.
+              Acesse o repositório do projeto no GitHub para acompanhar o
+              desenvolvimento.
             </p>
             <div className="space-y-2">
               <a
-                href="mailto:contato@mise.app"
+                href="https://github.com/ThaisFReis/mise"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 text-sm text-primary hover:text-accent font-medium transition-colors duration-200"
               >
-                <Mail className="h-4 w-4" aria-hidden="true" />
-                contato@mise.app
+                <Github className="h-4 w-4" aria-hidden="true" />
+                Ver no GitHub
               </a>
             </div>
           </div>
@@ -135,26 +110,6 @@ export function Footer() {
             <p className="text-sm text-muted-foreground text-center md:text-left">
               &copy; {currentYear} Mise Analytics. Todos os direitos reservados.
             </p>
-            <div className="flex items-center gap-6">
-              <Link
-                href="#"
-                className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200"
-              >
-                Política de Privacidade
-              </Link>
-              <Link
-                href="#"
-                className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200"
-              >
-                Termos de Uso
-              </Link>
-              <Link
-                href="#"
-                className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200"
-              >
-                Cookies
-              </Link>
-            </div>
           </div>
         </div>
       </div>

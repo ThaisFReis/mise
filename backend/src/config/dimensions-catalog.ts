@@ -29,7 +29,7 @@ export const DIMENSIONS_CATALOG: Dimension[] = [
   {
     id: 'channel',
     name: 'Canal de Venda',
-    description: 'Agrupa por canal (Presencial, iFood, Rappi, etc)',
+    description: 'Agrupa por canal (Presencial, iFood, Rappi, etc.)',
     type: 'entity',
     table: 'channels',
     field: 'name',
@@ -42,7 +42,7 @@ export const DIMENSIONS_CATALOG: Dimension[] = [
   {
     id: 'store',
     name: 'Loja',
-    description: 'Agrupa por loja/estabelecimento',
+    description: 'Agrupa por loja ou estabelecimento',
     type: 'entity',
     table: 'stores',
     field: 'name',
@@ -181,7 +181,7 @@ export const DIMENSIONS_CATALOG: Dimension[] = [
   {
     id: 'sale_status',
     name: 'Status do Pedido',
-    description: 'Agrupa por status (Concluído, Cancelado, etc)',
+    description: 'Agrupa por status (Concluído, Cancelado, etc.)',
     type: 'categorical',
     table: 'sales',
     field: 'sale_status_desc',
@@ -193,7 +193,7 @@ export const DIMENSIONS_CATALOG: Dimension[] = [
   {
     id: 'channel_type',
     name: 'Tipo de Canal',
-    description: 'Agrupa por tipo (Presencial vs Delivery)',
+    description: 'Agrupa por tipo (Presencial ou Delivery)',
     type: 'categorical',
     table: 'channels',
     field: 'type',
